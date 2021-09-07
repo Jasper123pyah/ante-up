@@ -6,7 +6,6 @@ on:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -24,6 +23,7 @@ jobs:
 
   publish:
      runs-on: ubuntu-latest
+     needs: test
      steps:
       -
         name: Set up QEMU
@@ -43,6 +43,17 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: user/app:latest
-          
+          tags: jasper123pyah/ante-up:latest
+  deploy:
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+    - name: deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SECRET_IP }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_KEY }}
+        port: 22
+        script: docker stop anteup && docker rm anteup && docker run -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
  
