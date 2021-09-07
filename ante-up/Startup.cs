@@ -33,8 +33,7 @@ namespace ante_up
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins("185.82.192.67:3000","localhost:3000").AllowAnyHeader()
-                            .AllowAnyMethod();
+                        builder.WithOrigins("http://185.82.192.67:3000", "localhost:3000");
                     });
             });
             services.AddControllers();
@@ -59,7 +58,7 @@ namespace ante_up
             {
                 builder.AllowAnyHeader()
                     .AllowAnyMethod()
-                    .WithOrigins("http://localhost:3000/")
+                    .SetIsOriginAllowed(origin => true)
                     .AllowCredentials();
             });
             app.UseEndpoints(endpoints =>
