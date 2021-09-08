@@ -14,13 +14,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore.Sqlite;
 
 namespace ante_up
 {
     public class Startup
     {
         readonly string MyAllowSpecificOrigins = "AllowCORS";
+        
+        private readonly string ante_up = Environment.GetEnvironmentVariable("CONN_STRING_ANTE_UP");
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -33,7 +35,8 @@ namespace ante_up
             services.AddControllers();
             
             services.AddDbContext<AnteUpContext>(options => 
-                options.UseSqlServer("Server=studmysql01.fhict.local;Uid=dbi362948;Database=dbi362948;Pwd=yourPassword;"));
+                options.UseMySql(ante_up, 
+                    ServerVersion.AutoDetect(ante_up)));
             
             services.AddCors(options =>
             {
@@ -59,7 +62,11 @@ namespace ante_up
             {
                 app.UseHsts();
             }
-
+            
+            using (var scope = app.ApplicationServices.CreateScope())
+            using (var context = scope.ServiceProvider.GetService<AnteUpContext>()) 
+                context.Database.EnsureCreated();
+            
             app.UseCors(x => x
                 .AllowAnyMethod()
                 .AllowAnyHeader()

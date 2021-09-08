@@ -25,18 +25,16 @@ namespace ante_up.Controllers
             }
             
             [HttpGet]
-            public List<string> GetGames()
+            public List<Game> GetGames()
             {
-                List<string> list = new()
+                GameData gameData = new(antecontext);
+                bool idk =  gameData.AddInitialGames();
+                List<Game> games = gameData.GetAllGames();
+                foreach (var VARIABLE in games)
                 {
-                    "1",
-                    "2",
-                    "3",
-                    "4",
-                    "5",
-                    "6"
-                };
-                return list;
+                    Console.WriteLine(VARIABLE.Name);
+                }
+                return games;
             }
 
             [HttpPost("/add")]

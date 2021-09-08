@@ -9,6 +9,6 @@ namespace ante_up.Common.Models
         public string Email { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public double Balance { get; set; }
+        public int Balance { get; set; }
     }
 }
