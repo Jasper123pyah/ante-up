@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ante_up.Common.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -8,18 +9,36 @@ namespace ante_up.Data
 {
     public class GameData
     {
-        public List<Game> GetAllGames(AnteUpContext context)
+        private readonly AnteUpContext anteContext;
+        public GameData(AnteUpContext context)
         {
-            List<Game> gameList = new();
-            foreach (Game game in context.Game)
-            {
-                gameList.Add(game);
-            }
-            return gameList;
+            anteContext = context;
         }
-        public string AddGame(Game game)
+        public List<Game> GetAllGames()
         {
-            return "Id";
+            return anteContext.Game.ToList();
+        }
+
+        public bool AddInitialGames()
+        {
+            if (GetGame("Fortnite") != null) return false;
+            
+            anteContext.Game.Add(new Game() {Name = "Fortnite", Image = "fortnite.webp"});
+            anteContext.Game.Add(new Game() {Name = "Apex Legends", Image = "apex.jpg"});
+            anteContext.Game.Add(new Game() {Name = "Minecraft", Image = "minecraft.png"});
+            anteContext.SaveChanges();
+            return true;
+        }
+        public Game GetGame(string gameName)
+        {
+            return anteContext.Game.FirstOrDefault(e => e.Name == gameName);
+        }
+        public bool AddGame(Game game)
+        {
+            anteContext.Game.Add(game);
+            anteContext.SaveChanges();
+
+            return GetGame(game.Name) != null;
         }
     }
 }
