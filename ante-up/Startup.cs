@@ -17,12 +17,11 @@ namespace ante_up
 {
     public class Startup
     {
-        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+        readonly string MyAllowSpecificOrigins = "AllowCORS";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -33,9 +32,11 @@ namespace ante_up
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins("http://185.82.192.67:3000", "localhost:3000");
+                        builder.WithOrigins("http://185.82.192.67:3000",
+                            "localhost:3000",
+                            "http://192.168.178.40:3000");
                     });
-            });
+            }); 
             services.AddControllers();
         }
 
@@ -46,28 +47,34 @@ namespace ante_up
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+            else
+            {
+                app.UseHsts();
+            }
+
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            
-            app.UseCors(MyAllowSpecificOrigins);
+
+            app.UseCors();
 
             app.UseAuthorization();
-            app.UseCors(builder =>
-            {
-                builder.AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .SetIsOriginAllowed(origin => true)
-                    .AllowCredentials();
-            });
+
+            app.UseStaticFiles();
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/echo",
-                    context => context.Response.WriteAsync("echo"))
-                    .RequireCors(MyAllowSpecificOrigins);
-                endpoints.MapControllers().RequireCors(MyAllowSpecificOrigins); 
-                
+                endpoints.MapControllers();
+            });
+
+            app.Run(async (context) => {
+                await context.Response.WriteAsync("404 Error - Page not found");
             });
         }
     }

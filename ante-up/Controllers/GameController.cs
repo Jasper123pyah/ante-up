@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ante_up.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -10,6 +11,7 @@ namespace ante_up.Controllers
 {
     namespace Together.Controllers
     {
+        [EnableCors("AllowCORS")]
         [ApiController]
         [Route("[controller]")]
         public class GameController : ControllerBase
