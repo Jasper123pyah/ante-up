@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ante_up.Models;
+using ante_up.Common.Models;
+using ante_up.Data;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,13 @@ namespace ante_up.Controllers
         [Route("[controller]")]
         public class GameController : ControllerBase
         {
+            private readonly AnteUpContext antecontext;
+
+            public GameController(AnteUpContext context)
+            {
+                antecontext = context;
+            }
+            
             [HttpGet]
             public List<string> GetGames()
             {
@@ -25,7 +33,8 @@ namespace ante_up.Controllers
                     "2",
                     "3",
                     "4",
-                    "5"
+                    "5",
+                    "6"
                 };
                 return list;
             }
