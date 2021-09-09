@@ -48,14 +48,23 @@ jobs:
     runs-on: ubuntu-latest
     needs: publish
     steps:
-    - name: deploy to server
+    - name: stop and remove docker image
       uses: appleboy/ssh-action@master
-      env: 
-        CONN_STRING: ${{ secrets.CONN_STRING }}
       with:
         host: ${{ secrets.SECRET_IP }}
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_KEY }}
         port: 22
-        script: docker stop anteup && docker rm anteup && docker pull jasper123pyah/ante-up:latest && docker run --env CONN_STRING_ANTE_UP=$CONN_STRING -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
- 
+        script: docker stop anteup && docker rm anteup
+    - name: deploy to server
+      uses: appleboy/ssh-action@master
+      env: 
+          conn_string: ${{ secrets.CONN_STRING }}
+      with:
+        host: ${{ secrets.SECRET_IP }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_KEY }}
+        port: 22
+        envs: conn_string
+        script: docker pull jasper123pyah/ante-up:latest && docker run -e conn_string_ante_up=$conn_string -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
+        
