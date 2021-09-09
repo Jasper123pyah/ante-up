@@ -66,4 +66,4 @@ jobs:
         key: ${{ secrets.SERVER_KEY }}
         port: 22
         envs: conn_string
-        script: echo"$conn_string" && docker pull jasper123pyah/ante-up:latest && docker run -e conn_string_ante_up=$conn_string  -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
+        script: echo"string is $conn_string" && docker pull jasper123pyah/ante-up:latest && docker run -e conn_string_ante_up=$conn_string  -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
