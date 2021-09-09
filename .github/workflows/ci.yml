@@ -20,7 +20,7 @@ jobs:
     - name: deploy to server
       uses: appleboy/ssh-action@master
       env: 
-          conn_string: "sus"
+        conn_string: ${{ secrets.CONN_STRING }}
       with:
         host: ${{ secrets.SECRET_IP }}
         username: ${{ secrets.SERVER_USERNAME }}
