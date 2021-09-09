@@ -19,12 +19,11 @@ jobs:
         script: docker stop anteup && docker rm anteup
     - name: deploy to server
       uses: appleboy/ssh-action@master
-      env: 
-        conn_string: ${{ secrets.CONN_STRING }}
+
       with:
         host: ${{ secrets.SECRET_IP }}
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_KEY }}
         port: 22
         envs: conn_string
-        script: echo "string is $env.conn_string" && docker pull jasper123pyah/ante-up:latest && docker run -e conn_string_ante_up=$conn_string  -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
+        script: echo "string is ${{ secrets.CONN_STRING }}" && docker pull jasper123pyah/ante-up:latest && docker run -e conn_string_ante_up=$conn_string  -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
