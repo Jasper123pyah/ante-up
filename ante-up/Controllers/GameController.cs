@@ -28,12 +28,7 @@ namespace ante_up.Controllers
             public List<Game> GetGames()
             {
                 GameData gameData = new(antecontext);
-                bool idk =  gameData.AddInitialGames();
                 List<Game> games = gameData.GetAllGames();
-                foreach (var VARIABLE in games)
-                {
-                    Console.WriteLine(VARIABLE.Name);
-                }
                 return games;
             }
 
