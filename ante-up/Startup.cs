@@ -21,7 +21,7 @@ namespace ante_up
     {
         readonly string MyAllowSpecificOrigins = "AllowCORS";
         
-        private readonly string ante_up = Environment.GetEnvironmentVariable("CONN_STRING_ANTE_UP");
+        private readonly string ante_up = Environment.GetEnvironmentVariable("conn_string_ante_up");
         
         public Startup(IConfiguration configuration)
         {
