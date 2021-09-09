@@ -57,5 +57,6 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_KEY }}
         port: 22
-        script: docker stop anteup && docker rm anteup && docker pull jasper123pyah/ante-up:latest && docker run --env CONN_STRING_ANTE_UP=$env.CONN_STRING -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
+        envs: CONN_STRING
+        script: docker stop anteup && docker rm anteup && docker pull jasper123pyah/ante-up:latest && docker run --env CONN_STRING_ANTE_UP=$CONN_STRING -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
         
