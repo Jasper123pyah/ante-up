@@ -59,12 +59,12 @@ jobs:
     - name: deploy to server
       uses: appleboy/ssh-action@master
       env: 
-          CONN_STRING: ${{ secrets.CONN_STRING }}
+          conn_string: ${{ secrets.CONN_STRING }}
       with:
         host: ${{ secrets.SECRET_IP }}
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_KEY }}
         port: 22
-        envs: CONN_STRING
-        script: docker pull jasper123pyah/ante-up:latest && docker run -e CONN_STRING_ANTE_UP=$CONN_STRING -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
+        envs: conn_string
+        script: docker pull jasper123pyah/ante-up:latest && docker run -e conn_string_ante_up=$conn_string -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
         
