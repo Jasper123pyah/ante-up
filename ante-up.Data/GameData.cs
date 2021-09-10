@@ -19,15 +19,14 @@ namespace ante_up.Data
             return anteContext.Game.ToList();
         }
 
-        public bool AddInitialGames()
+        public void AddInitialGames()
         {
-            if (GetGame("Fortnite") != null) return false;
+            if (GetGame("Fortnite") != null) return;
             
-            anteContext.Game.Add(new Game() {Name = "Fortnite", Image = "fortnite.webp"});
-            anteContext.Game.Add(new Game() {Name = "Apex Legends", Image = "apex.jpg"});
-            anteContext.Game.Add(new Game() {Name = "Minecraft", Image = "minecraft.png"});
+            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Fortnite", Image = "fortnite.webp"});
+            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Apex Legends", Image = "apex.jpg"});
+            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Minecraft", Image = "minecraft.png"});
             anteContext.SaveChanges();
-            return true;
         }
         public Game GetGame(string gameName)
         {

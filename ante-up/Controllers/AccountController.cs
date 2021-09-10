@@ -1,6 +1,8 @@
 using System;
 using ante_up.Common.ApiModels;
+using ante_up.Common.Models;
 using ante_up.Data;
+using ante_up.Logic;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,10 +19,28 @@ namespace ante_up.Controllers
         {
             antecontext = context;
         }
-        [HttpPost("/register")]
-        public bool NewGame(ApiAccount newAccount)
+        [HttpPost("/account/register")]
+        public string Register(ApiAccount newAccount)
         {
-            return new AccountData(antecontext).Register(newAccount);;
+            return new AccountLogic(antecontext).Register(newAccount);;
+        }
+        [HttpGet("/account/info")]
+        public ApiAccountInfo GetAccountInfo(string id)
+        {
+            Account acc = new AccountData(antecontext).GetAccountById(id);
+
+            ApiAccountInfo accountInfo = new()
+            {
+                Username = acc.Username,
+                Balance = acc.Balance,
+                Email = acc.Email
+            };
+            return accountInfo;
+        }
+        [HttpPost("/account/login")]
+        public ApiLogin Login(ApiAccount login)
+        {
+            return new AccountLogic(antecontext).LoginCheck(login);
         }
     }
 }
