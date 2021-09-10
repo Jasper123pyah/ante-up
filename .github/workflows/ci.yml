@@ -64,4 +64,4 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_KEY }}
         port: 22
-        script: docker pull jasper123pyah/ante-up:latest && docker run -e conn_string_ante_up=${{ secrets.CONN_STRING }} -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
+        script: docker pull jasper123pyah/ante-up:latest && docker run -e conn_string_ante_up=${{ secrets.JWT_SECRET }} -e jwt_secret=${{ secrets.CONN_STRING }}  -d --name anteup -p 420:80 jasper123pyah/ante-up:latest
