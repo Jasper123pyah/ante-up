@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ante_up.Common.ApiModels;
 using ante_up.Common.Models;
 using ante_up.Data;
 using Microsoft.AspNetCore.Cors;
@@ -28,20 +29,15 @@ namespace ante_up.Controllers
             public List<Game> GetGames()
             {
                 GameData gameData = new(antecontext);
+                gameData.AddInitialGames();
                 List<Game> games = gameData.GetAllGames();
                 return games;
             }
 
             [HttpPost("/add")]
-            public Game NewGame(Game newGame)
+            public Game NewGame(ApiGame newGame)
             {
-                Console.WriteLine(newGame);
-                Game game = new Game()
-                {
-                    Name = newGame.Name
-                };
-                // data.addnewgame
-                Console.WriteLine("Game Added");
+                
                 return null;
             }
         }
