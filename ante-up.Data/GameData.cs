@@ -18,6 +18,10 @@ namespace ante_up.Data
         {
             return anteContext.Game.ToList();
         }
+        public List<string> GetAllGameNames()
+        {
+            return anteContext.Game.ToList().Select(game => game.Name).ToList();
+        }
 
         public void AddInitialGames()
         {
