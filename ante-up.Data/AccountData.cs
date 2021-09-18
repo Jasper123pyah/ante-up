@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ante_up.Common.ApiModels;
 using ante_up.Common.Models;
@@ -20,7 +21,8 @@ namespace ante_up.Data
                 Balance = 0,
                 Email = account.Email,
                 Username = account.Username,
-                Password = account.Password
+                Password = account.Password,
+                Friends = new List<Friend>()
             });
             anteContext.SaveChanges();
         }

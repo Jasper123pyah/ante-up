@@ -14,19 +14,22 @@ namespace ante_up.Controllers
     public class AccountController : ControllerBase
     {
         private readonly AnteUpContext antecontext;
-
         public AccountController(AnteUpContext context)
         {
             antecontext = context;
         }
+        
         [HttpPost("/account/register")]
         public string Register(ApiAccount newAccount)
         {
             return new AccountLogic(antecontext).Register(newAccount);;
         }
+        
         [HttpGet("/account/info")]
         public ApiAccountInfo GetAccountInfo(string id)
         {
+            if (id == null)
+                return new ApiAccountInfo();
             Account acc = new AccountData(antecontext).GetAccountById(id);
 
             ApiAccountInfo accountInfo = new()
@@ -37,6 +40,7 @@ namespace ante_up.Controllers
             };
             return accountInfo;
         }
+        
         [HttpPost("/account/login")]
         public ApiLogin Login(ApiAccount login)
         {

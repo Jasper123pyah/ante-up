@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-
-namespace ante_up.Common.Models
+namespace ante_up.Common.ViewModels
 {
-    public class Wager
+    public class ViewWager
     {
         public string Id { get; set; }
         public string Game { get; set; }
@@ -13,7 +10,7 @@ namespace ante_up.Common.Models
         public string HostName { get; set; }
         public int Ante { get; set; }
         public int PlayerCap { get; set; }
-        public Team Team1 { get; set; }
-        public Team Team2 { get; set; }
+        public ViewTeam Team1 { get; set; }
+        public ViewTeam Team2 { get; set; }
     }
 }

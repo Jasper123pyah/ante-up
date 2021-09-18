@@ -30,10 +30,14 @@ namespace ante_up.Controllers
             {
                 GameData gameData = new(antecontext);
                 gameData.AddInitialGames();
-                List<Game> games = gameData.GetAllGames();
-                return games;
+                return gameData.GetAllGames();
             }
 
+            [HttpGet("/game/gamenames")]
+            public List<string> GetGameNames()
+            {
+                return new GameData(antecontext).GetAllGameNames();
+            }
             [HttpPost("/add")]
             public Game NewGame(ApiGame newGame)
             {

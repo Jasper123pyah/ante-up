@@ -19,10 +19,10 @@ namespace ante_up.Logic
 
         public ApiLogin LoginCheck(ApiAccount account)
         {
-            ApiLogin login = new();
+            ApiLogin login = new(){Username = ""};
             if (accountData.GetAccountByEmail(account.Email) == null)
                  login.Response = "1";
-            if (accountData.GetAccountByEmail(account.Email).Password != account.Password)
+            else if (accountData.GetAccountByEmail(account.Email).Password != account.Password)
                 login.Response = "2";
             else
             {
