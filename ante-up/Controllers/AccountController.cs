@@ -44,7 +44,8 @@ namespace ante_up.Controllers
         [HttpPost("/account/login")]
         public ApiLogin Login(ApiAccount login)
         {
-            return new AccountLogic(antecontext).LoginCheck(login);
+            Account account = new AccountData(antecontext).GetAccountByEmail(login.Email);
+            return new AccountLogic(antecontext).LoginCheck(account, login.Password);
         }
     }
 }

@@ -12,24 +12,24 @@ namespace ante_up.Logic
     {
         private readonly AccountData accountData;
         
-        public AccountLogic(AnteUpContext context)
+        public AccountLogic(AnteUpContext context = null)
         {
              accountData = new AccountData(context);
         }
 
-        public ApiLogin LoginCheck(ApiAccount account)
+        public ApiLogin LoginCheck(Account account, string password)
         {
             ApiLogin login = new(){Username = ""};
-            if (accountData.GetAccountByEmail(account.Email) == null)
+            if (account == null)
                  login.Response = "1";
-            else if (accountData.GetAccountByEmail(account.Email).Password != account.Password)
+            else if (!BCrypt.Net.BCrypt.Verify(password,account.Password))
                 login.Response = "2";
             else
             {
-                login.Response = accountData.GetAccountByEmail(account.Email).Id;
-                login.Username = accountData.GetAccountByEmail(account.Email).Username;
+                login.Response = account.Id;
+                login.Username = account.Username;
             }
-                
+                 
             return login ;
         }
         public string Register(ApiAccount account)
@@ -38,6 +38,8 @@ namespace ante_up.Logic
                 return "Email is already taken.";
             if (accountData.GetAccountByUsername(account.Username) != null)
                 return "Username is already taken.";
+
+            account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
             accountData.Register(account);
             return "";
         }
