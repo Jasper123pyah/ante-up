@@ -36,17 +36,11 @@ namespace ante_up.Data
                                                 .ThenInclude(x => x.Players)
                                                 .FirstOrDefault(x => x.Id == playerId);
             Wager wager = GetById(wagerId);
+            
+            Console.WriteLine(account.Team);
+            if (account.Team != null)
+                RemoveFromTeam(wager, account);
 
-            if (wager.Team1.Id == account.Team.Id)
-            {
-                wager.Team1.Players.Remove(account);
-                account.Team = new Team(){Id = ""};
-            }
-            else if (wager.Team2.Id == account.Team.Id)
-            {
-                wager.Team2.Players.Remove(account);
-                account.Team = new Team();
-            }
             if (teamNumber == 1)
             {
                 wager.Team1.Players.Add(account);
@@ -59,6 +53,22 @@ namespace ante_up.Data
                 account.Team = wager.Team2;
                 anteContext.SaveChanges();
             }
+        }
+
+        public void RemoveFromTeam(Wager wager, Account account)
+        {
+            if (wager.Team1.Id == account.Team.Id)
+            {
+                wager.Team1.Players.Remove(account);
+                account.Team = new Team(){Id = ""};
+            }
+            else if (wager.Team2.Id == account.Team.Id)
+            {
+                wager.Team2.Players.Remove(account);
+                account.Team = new Team();
+            }
+
+            anteContext.SaveChanges();
         }
         
         public List<Wager> GetWagerByGame(string gameName)
