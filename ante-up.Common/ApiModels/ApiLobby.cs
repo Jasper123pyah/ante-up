@@ -1,6 +1,6 @@
 namespace ante_up.Common.ApiModels
 {
-    public class ApiJoinTeam
+    public class ApiLobby
     {
         public string WagerId { get; set; }
         public string PlayerId { get; set; }
