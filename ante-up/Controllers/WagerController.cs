@@ -47,9 +47,15 @@ namespace ante_up.Controllers
             return new WagerLogic(antecontext).AddNewWager(newWager);
         } 
         [HttpPost("/wager/jointeam")]
-        public void JoinTeam(ApiJoinTeam joinTeam)
+        public int JoinTeam(ApiLobby apiLobby)
         {
-            new WagerData(antecontext).JoinTeam(joinTeam.WagerId, joinTeam.PlayerId, joinTeam.TeamNumber);
+            return new WagerData(antecontext).JoinTeam(apiLobby.WagerId, apiLobby.PlayerId, apiLobby.TeamNumber);
+        }
+
+        [HttpPost("/wager/leave")]
+        public void LeaveTeam(ApiLobby apiLobby)
+        {
+            new WagerData(antecontext).LeaveWager(apiLobby.WagerId, apiLobby.PlayerId);
         }
     }
 }

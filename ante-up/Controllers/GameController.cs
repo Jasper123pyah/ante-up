@@ -29,7 +29,6 @@ namespace ante_up.Controllers
             public List<Game> GetGames()
             {
                 GameData gameData = new(antecontext);
-                gameData.AddInitialGames();
                 return gameData.GetAllGames();
             }
 

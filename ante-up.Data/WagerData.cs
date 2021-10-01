@@ -4,7 +4,6 @@ using System.Linq;
 using ante_up.Common.ApiModels;
 using ante_up.Common.Models;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Security.Certificates;
 
 namespace ante_up.Data
 {
@@ -16,11 +15,39 @@ namespace ante_up.Data
             anteContext = context;
         }
         public void AddNewWager(Wager newWager)
-        { 
+        {
+            if(GetAccountWager(newWager.HostId) != null)
+                LeaveWager(GetAccountWager(newWager.HostId).Id, newWager.HostId);
+            
             anteContext.Wager.Add(newWager);
             anteContext.SaveChanges();
         }
-
+        
+        public void LeaveWager(string wagerId, string playerId)
+        {
+            Wager wager = GetById(wagerId);
+            Account account = new AccountData(anteContext).GetAccountById(playerId);
+            
+            RemoveFromTeam(wager, account);
+            if (wager.HostId == account.Id)
+            {
+                if(wager.Team1.Players.FirstOrDefault()?.Id != null)
+                    wager.HostId = wager.Team1.Players.FirstOrDefault()?.Id;
+                else if (wager.Team2.Players.FirstOrDefault()?.Id != null)
+                    wager.HostId = wager.Team2.Players.FirstOrDefault()?.Id;
+                else DeleteWager(wager.Id);
+            }
+            anteContext.SaveChanges();
+        }
+        
+        public void DeleteWager(string wagerId)
+        {
+            Wager wager = GetById(wagerId);
+            anteContext.Team.RemoveRange(wager.Team1);
+            anteContext.Team.RemoveRange(wager.Team2);
+            anteContext.Wager.Remove(wager);
+            anteContext.SaveChanges();
+        }
         public Wager GetById(string id)
         {
             return anteContext.Wager.Include(team1 => team1.Team1)
@@ -30,29 +57,43 @@ namespace ante_up.Data
                                     .FirstOrDefault(wager => wager.Id == id);
         }
 
-        public void JoinTeam(string wagerId, string playerId, int teamNumber)
+        public Wager GetAccountWager(string accountId)
         {
-            Account account = anteContext.Account.Include(x => x.Team)
-                                                .ThenInclude(x => x.Players)
-                                                .FirstOrDefault(x => x.Id == playerId);
-            Wager wager = GetById(wagerId);
+            Account account = new AccountData(anteContext).GetAccountById(accountId);
+            if (account.Team == null)
+                return null;
+            if (anteContext.Wager.FirstOrDefault(e => e.Team1.Players.Contains(account)) != null)
+                return anteContext.Wager.FirstOrDefault(e => e.Team1.Players.Contains(account));
+            if (anteContext.Wager.FirstOrDefault(e => e.Team2.Players.Contains(account)) != null)
+                return anteContext.Wager.FirstOrDefault(e => e.Team2.Players.Contains(account));
+            return null;
             
-            Console.WriteLine(account.Team);
-            if (account.Team != null)
-                RemoveFromTeam(wager, account);
+        }
+        public int JoinTeam(string wagerId, string playerId, int teamNumber)
+        {
+            Account account = new AccountData(anteContext).GetAccountById(playerId);
+            Wager wager = GetById(wagerId);
+            Wager currentWager = GetAccountWager(playerId);
+            
+            if (currentWager != null)
+                LeaveWager(currentWager.Id, playerId);
 
             if (teamNumber == 1)
             {
                 wager.Team1.Players.Add(account);
                 account.Team = wager.Team1;
                 anteContext.SaveChanges();
-            }
-            else if (teamNumber == 2)
+                return teamNumber;
+            } 
+            if (teamNumber == 2)
             {
                 wager.Team2.Players.Add(account);
                 account.Team = wager.Team2;
                 anteContext.SaveChanges();
+                return teamNumber;
             }
+
+            return 0;
         }
 
         public void RemoveFromTeam(Wager wager, Account account)
@@ -60,14 +101,13 @@ namespace ante_up.Data
             if (wager.Team1.Id == account.Team.Id)
             {
                 wager.Team1.Players.Remove(account);
-                account.Team = new Team(){Id = ""};
+                account.Team = null;
             }
             else if (wager.Team2.Id == account.Team.Id)
             {
                 wager.Team2.Players.Remove(account);
-                account.Team = new Team();
+                account.Team = null;
             }
-
             anteContext.SaveChanges();
         }
         
