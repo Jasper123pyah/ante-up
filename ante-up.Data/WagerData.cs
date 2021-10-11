@@ -69,32 +69,6 @@ namespace ante_up.Data
             return null;
             
         }
-        public int JoinTeam(string wagerId, string playerId, int teamNumber)
-        {
-            Account account = new AccountData(anteContext).GetAccountById(playerId);
-            Wager wager = GetById(wagerId);
-            Wager currentWager = GetAccountWager(playerId);
-            
-            if (currentWager != null)
-                LeaveWager(currentWager.Id, playerId);
-
-            if (teamNumber == 1)
-            {
-                wager.Team1.Players.Add(account);
-                account.Team = wager.Team1;
-                anteContext.SaveChanges();
-                return teamNumber;
-            } 
-            if (teamNumber == 2)
-            {
-                wager.Team2.Players.Add(account);
-                account.Team = wager.Team2;
-                anteContext.SaveChanges();
-                return teamNumber;
-            }
-
-            return 0;
-        }
 
         public void RemoveFromTeam(Wager wager, Account account)
         {

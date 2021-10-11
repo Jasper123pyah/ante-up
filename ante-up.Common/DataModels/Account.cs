@@ -13,5 +13,6 @@ namespace ante_up.Common.Models
         public int Balance { get; set; }
         public Team Team { get; set; }
         public List<Friend> Friends { get; set; }
+        public PlayerStats Stats { get; set; }
     }
 }

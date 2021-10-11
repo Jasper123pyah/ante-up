@@ -44,12 +44,10 @@ namespace ante_up.Controllers
         [HttpPost("/wager/create")]
         public string NewWager(ApiWager newWager)
         {
+            WagerLogic logic = new(antecontext);
+            logic.AddNewWager(newWager);
+            
             return new WagerLogic(antecontext).AddNewWager(newWager);
-        } 
-        [HttpPost("/wager/jointeam")]
-        public int JoinTeam(ApiLobby apiLobby)
-        {
-            return new WagerData(antecontext).JoinTeam(apiLobby.WagerId, apiLobby.PlayerId, apiLobby.TeamNumber);
         }
 
         [HttpPost("/wager/leave")]

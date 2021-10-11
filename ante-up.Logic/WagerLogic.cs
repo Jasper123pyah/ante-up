@@ -31,15 +31,15 @@ namespace ante_up.Logic
             };
         }
 
-        public ViewWager GetWagerById(string Id)
+        public ViewWager GetWagerById(string id)
         {
-            return ConvertWager(wagerData.GetById(Id));
+            return ConvertWager(wagerData.GetById(id));
         }
         public List<ViewWager> GetWagersInGame(string gameName)
         {
             return wagerData.GetWagerByGame(gameName).Select(wager => ConvertWager(wager)).ToList();
         }
-
+        
         private ViewWager ConvertWager(Wager wager)
         {
             ViewWager viewWager = new()

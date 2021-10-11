@@ -31,7 +31,7 @@ namespace ante_up.Controllers
             if (id == null)
                 return new ApiAccountInfo();
             Account acc = new AccountData(antecontext).GetAccountById(id);
-
+            
             ApiAccountInfo accountInfo = new()
             {
                 Username = acc.Username,

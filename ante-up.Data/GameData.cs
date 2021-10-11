@@ -30,7 +30,7 @@ namespace ante_up.Data
             
             anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Fortnite", Image = "fortnite.jpg"});
             anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Chess", Image = "chess.jpg"});
-            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Call of Duty Modern Warfare", Image = "codmw.jpg"});
+            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "CoD Modern Warfare", Image = "codmw.jpg"});
             anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "CS:GO", Image = "csgo.jpg"});
             anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Fifa 22", Image = "fifa22.jpg"});
             anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Madden NFL 22", Image = "madden.jpg"});

@@ -14,6 +14,7 @@ namespace ante_up.Data
         {
             anteContext = context;
         }
+        
         public void Register(ApiAccount account)
         {
             anteContext.Account.Add(new Account

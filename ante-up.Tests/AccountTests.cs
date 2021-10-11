@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using ante_up.Common.Models;
 using ante_up.Logic;
 using NUnit.Framework;
@@ -9,7 +12,7 @@ namespace ante_up.Tests
         [Test]
         public void TestIfLoginPasses()
         {
-            Account account = new Account()
+            Account account = new()
             {
                 Id = "123abc",
                 Username = "User",
