@@ -15,5 +15,6 @@ namespace ante_up.Common.Models
         public int PlayerCap { get; set; }
         public Team Team1 { get; set; }
         public Team Team2 { get; set; }
+        public Chat Chat { get; set; }
     }
 }

@@ -33,7 +33,13 @@ namespace ante_up.Logic
 
         public ViewWager GetWagerById(string id)
         {
-            return ConvertWager(wagerData.GetById(id));
+            Wager wager = wagerData.GetById(id);
+
+            if (wager == null)
+                return null;
+            
+            ViewWager viewWager = ConvertWager(wager);
+            return viewWager;
         }
         public List<ViewWager> GetWagersInGame(string gameName)
         {
@@ -61,7 +67,8 @@ namespace ante_up.Logic
                 {
                     Id = wager.Team2.Id,
                     Players = ConvertAccounts(wager.Team2.Players)
-                }
+                },
+                Chat = wager.Chat
             };
             return viewWager;
         }
@@ -95,7 +102,8 @@ namespace ante_up.Logic
                         accountData.GetAccountById(newWager.CreatorId)
                     } 
                 },
-                Team2 = new Team(){Id = Guid.NewGuid().ToString(),Players = new List<Account>()}
+                Team2 = new Team(){Id = Guid.NewGuid().ToString(),Players = new List<Account>()},
+                Chat = new Chat(){Id = Guid.NewGuid().ToString(), Message = new List<Message>()}
             };
             wagerData.AddNewWager(wager);
             

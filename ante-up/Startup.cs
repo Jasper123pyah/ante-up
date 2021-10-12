@@ -1,5 +1,6 @@
 using System;
 using ante_up.Data;
+using ante_up.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -41,7 +42,9 @@ namespace ante_up
                                             "http://192.168.178.40:3000");
                     });
             }); 
-            
+            services.AddSignalR(e => {
+                e.MaximumReceiveMessageSize = 102400000;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,6 +82,7 @@ namespace ante_up
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<AnteHub>("/antehub");
             });
 
             app.Run(async (context) => {

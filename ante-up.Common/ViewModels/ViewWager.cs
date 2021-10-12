@@ -1,3 +1,5 @@
+using ante_up.Common.Models;
+
 namespace ante_up.Common.ViewModels
 {
     public class ViewWager
@@ -12,5 +14,6 @@ namespace ante_up.Common.ViewModels
         public int PlayerCap { get; set; }
         public ViewTeam Team1 { get; set; }
         public ViewTeam Team2 { get; set; }
+        public Chat Chat { get; set; }
     }
 }

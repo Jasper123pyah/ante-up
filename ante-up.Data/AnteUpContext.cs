@@ -8,6 +8,7 @@ namespace ante_up.Data
         public DbSet<Account> Account { get; set; }
         public DbSet<Game> Game { get; set; }
         public DbSet<Wager> Wager { get; set; }
+        public DbSet<Chat> Chat { get; set; }
         public DbSet<Team> Team { get; set; }
         public AnteUpContext(DbContextOptions options) : base(options){}
 

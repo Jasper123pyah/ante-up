@@ -39,13 +39,37 @@ namespace ante_up.Data
             }
             anteContext.SaveChanges();
         }
-        
+        public void JoinTeam(string wagerId, string playerId, int teamNumber)
+        {
+            Account account = new AccountData(anteContext).GetAccountById(playerId);
+            Wager wager = GetById(wagerId);
+            Wager currentWager = GetAccountWager(playerId);
+            
+            if (currentWager != null && currentWager != wager)
+                LeaveWager(currentWager.Id, playerId);
+
+            if (teamNumber == 1)
+            {
+                wager.Team1.Players.Add(account);
+                account.Team = wager.Team1;
+                anteContext.SaveChanges();
+            } 
+            if (teamNumber == 2)
+            {
+                wager.Team2.Players.Add(account);
+                account.Team = wager.Team2;
+                anteContext.SaveChanges();
+            }
+        }
         public void DeleteWager(string wagerId)
         {
             Wager wager = GetById(wagerId);
+            
             anteContext.Team.RemoveRange(wager.Team1);
             anteContext.Team.RemoveRange(wager.Team2);
+            anteContext.Chat.RemoveRange(wager.Chat);
             anteContext.Wager.Remove(wager);
+            
             anteContext.SaveChanges();
         }
         public Wager GetById(string id)
@@ -54,6 +78,8 @@ namespace ante_up.Data
                                     .ThenInclude(x => x.Players)
                                     .Include(team2 => team2.Team2)
                                     .ThenInclude(x => x.Players)
+                                    .Include(x => x.Chat)
+                                    .ThenInclude(x => x.Message)
                                     .FirstOrDefault(wager => wager.Id == id);
         }
 
