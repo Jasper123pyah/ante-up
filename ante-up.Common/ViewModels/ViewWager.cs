@@ -1,4 +1,4 @@
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
 
 namespace ante_up.Common.ViewModels
 {

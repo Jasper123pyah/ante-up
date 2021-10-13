@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
 using ante_up.Logic;
 using NUnit.Framework;
 

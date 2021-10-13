@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ante_up.Common.HubModels;
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
 using ante_up.Data;
 using ante_up.Logic;
 using Microsoft.AspNetCore.SignalR;
@@ -60,7 +60,7 @@ namespace ante_up.Hubs
         public async Task SendMessage(LobbyMessage lobbyMessage)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, lobbyMessage.LobbyId);
-            LobbyMessage message = new ChatData(_anteUpContext).SendMessage(lobbyMessage);
+            Message message = new ChatData(_anteUpContext).SendMessage(lobbyMessage);
 
             await Clients.Group(lobbyMessage.LobbyId).SendAsync("NewMessage", message);
         }

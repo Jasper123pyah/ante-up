@@ -1,6 +1,6 @@
 using System;
 using ante_up.Common.ApiModels;
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
 using ante_up.Data;
 using ante_up.Logic;
 using Microsoft.AspNetCore.Cors;

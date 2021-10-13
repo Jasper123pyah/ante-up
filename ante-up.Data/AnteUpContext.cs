@@ -1,4 +1,4 @@
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace ante_up.Data

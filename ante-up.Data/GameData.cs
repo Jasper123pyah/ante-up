@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
 using MySql.Data.MySqlClient;
 using Microsoft.EntityFrameworkCore;
 

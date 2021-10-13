@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ante_up.Common.Models
+namespace ante_up.Common.DataModels
 {
     public class Friend
     {

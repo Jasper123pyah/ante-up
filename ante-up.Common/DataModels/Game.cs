@@ -1,6 +1,6 @@
 using System;
 
-namespace ante_up.Common.Models
+namespace ante_up.Common.DataModels
 {
     public class Game
     {

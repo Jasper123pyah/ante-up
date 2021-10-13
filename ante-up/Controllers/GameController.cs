@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ante_up.Common.ApiModels;
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
 using ante_up.Data;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;

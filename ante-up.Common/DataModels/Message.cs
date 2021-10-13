@@ -1,6 +1,7 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ante_up.Common.Models
+namespace ante_up.Common.DataModels
 {
     public class Message
     {
@@ -8,5 +9,6 @@ namespace ante_up.Common.Models
         public string Id { get; set; }
         public string Sender { get; set; }
         public string Text { get; set; }
+        public DateTime Time { get; set; }
     }
 }

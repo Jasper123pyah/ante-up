@@ -1,5 +1,5 @@
 using ante_up.Common.ApiModels;
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
 using ante_up.Data;
 
 namespace ante_up.Logic
