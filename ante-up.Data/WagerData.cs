@@ -60,7 +60,7 @@ namespace ante_up.Data
                 anteContext.SaveChanges();
             }
         }
-        public void DeleteWager(string wagerId)
+        private void DeleteWager(string wagerId)
         {
             Wager wager = GetById(wagerId);
             

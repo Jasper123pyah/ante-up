@@ -13,6 +13,22 @@ namespace ante_up.Logic
              accountData = new AccountData(context);
         }
 
+        public ApiAccountInfo GetAccountInfo(string id)
+        {
+            Account acc = accountData.GetAccountById(id);
+            if (acc == null)
+                return null;
+            
+            ApiAccountInfo accountInfo = new()
+            {
+                Username = acc.Username,
+                Balance = acc.Balance,
+                Email = acc.Email
+            };
+
+            return accountInfo;
+        }
+        
         public ApiLogin LoginCheck(Account account, string password)
         {
             ApiLogin login = new(){Username = ""};

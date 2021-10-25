@@ -29,19 +29,20 @@ namespace ante_up.Controllers
             return new List<Wager>();
         }
         
-        [HttpGet("/wager/getbygame")]
+        [HttpGet("/wager/game/{gameName}")]
         public List<ViewWager> GetWagerByGame(string gameName)
         {
             return new WagerLogic(antecontext).GetWagersInGame(gameName);
         }
 
-        [HttpGet("/wager/getbyid")]
+        [HttpGet("/wager/{id}")]
         public ViewWager GetWagerById(string id)
         {
             ViewWager viewWager = new WagerLogic(antecontext).GetWagerById(id);
             return viewWager;
         }
-        [HttpPost("/wager/create")]
+
+        [HttpPost("/wager")]
         public string NewWager(ApiWager newWager)
         {
             WagerLogic logic = new(antecontext);
@@ -49,6 +50,14 @@ namespace ante_up.Controllers
             
             return new WagerLogic(antecontext).AddNewWager(newWager);
         }
+
+        [HttpGet("/wager/chat")]
+        public Chat GetWagerChat(string id)
+        {
+            Chat chat = new ChatData(antecontext).GetWagerChat(id);
+            return new ChatLogic().SortChat(chat);
+        }
+        
 
         [HttpPost("/wager/leave")]
         public void LeaveTeam(ApiLobby apiLobby)

@@ -32,15 +32,14 @@ namespace ante_up.Controllers
                 return gameData.GetAllGames();
             }
 
-            [HttpGet("/game/gamenames")]
+            [HttpGet("/game/names")]
             public List<string> GetGameNames()
             {
                 return new GameData(antecontext).GetAllGameNames();
             }
-            [HttpPost("/add")]
+            [HttpPost]
             public Game NewGame(ApiGame newGame)
             {
-                
                 return null;
             }
         }

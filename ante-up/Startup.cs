@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace ante_up
 {
@@ -31,7 +32,7 @@ namespace ante_up
             services.AddDbContext<AnteUpContext>(options => 
                 options.UseMySql(ante_up, 
                     ServerVersion.AutoDetect(ante_up)));
-            
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "ante_up", Version = "v1"}); });
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -39,6 +40,7 @@ namespace ante_up
                     {
                         builder.WithOrigins("http://185.82.192.67:3000",
                                             "localhost:3000",
+                                            "localhost:6000",
                                             "http://192.168.178.40:3000");
                     });
             }); 
@@ -53,6 +55,8 @@ namespace ante_up
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ante_up v1"));
             }
             else
             {

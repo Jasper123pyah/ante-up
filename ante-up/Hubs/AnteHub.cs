@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using ante_up.Common.HubModels;
 using ante_up.Common.DataModels;
@@ -56,13 +57,13 @@ namespace ante_up.Hubs
                 await Clients.Caller.SendAsync("YouLeft");
             }
         }
-
+        
         public async Task SendMessage(LobbyMessage lobbyMessage)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, lobbyMessage.LobbyId);
-            Message message = new ChatData(_anteUpContext).SendMessage(lobbyMessage);
+            new ChatData(_anteUpContext).SendMessage(lobbyMessage);
 
-            await Clients.Group(lobbyMessage.LobbyId).SendAsync("NewMessage", message);
+            await Clients.Group(lobbyMessage.LobbyId).SendAsync("NewMessage");
         }
     }
 }

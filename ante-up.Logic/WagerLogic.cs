@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
 using ante_up.Common.ViewModels;
@@ -31,13 +32,19 @@ namespace ante_up.Logic
             };
         }
 
+        public Task WagerTimer(string lobbyId)
+        {
+            return Task.CompletedTask;
+        }
+        
         public ViewWager GetWagerById(string id)
         {
             Wager wager = wagerData.GetById(id);
-
             if (wager == null)
                 return null;
             
+            wager.Chat = new ChatLogic().SortChat(wager.Chat);
+
             ViewWager viewWager = ConvertWager(wager);
             return viewWager;
         }
