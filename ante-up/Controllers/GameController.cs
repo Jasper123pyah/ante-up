@@ -18,29 +18,24 @@ namespace ante_up.Controllers
         [Route("[controller]")]
         public class GameController : ControllerBase
         {
-            private readonly AnteUpContext antecontext;
+            private readonly AnteUpContext _antecontext;
 
             public GameController(AnteUpContext context)
             {
-                antecontext = context;
+                _antecontext = context;
             }
             
             [HttpGet]
             public List<Game> GetGames()
             {
-                GameData gameData = new(antecontext);
+                GameData gameData = new(_antecontext);
                 return gameData.GetAllGames();
             }
 
             [HttpGet("/game/names")]
             public List<string> GetGameNames()
             {
-                return new GameData(antecontext).GetAllGameNames();
-            }
-            [HttpPost]
-            public Game NewGame(ApiGame newGame)
-            {
-                return null;
+                return new GameData(_antecontext).GetAllGameNames();
             }
         }
     }

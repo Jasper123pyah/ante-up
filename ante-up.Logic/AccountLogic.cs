@@ -1,6 +1,7 @@
 using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
 using ante_up.Data;
+using ante_up.Logic.JWT;
 
 namespace ante_up.Logic
 {
@@ -10,7 +11,7 @@ namespace ante_up.Logic
         
         public AccountLogic(AnteUpContext context = null)
         {
-             accountData = new AccountData(context);
+             accountData = new AccountData(context!);
         }
 
         public ApiAccountInfo GetAccountInfo(string id)
@@ -28,7 +29,11 @@ namespace ante_up.Logic
 
             return accountInfo;
         }
-        
+
+        public string GetAccountId(string name)
+        {
+            return accountData.GetAccountByUsername(name)?.Id;
+        }
         public ApiLogin LoginCheck(Account account, string password)
         {
             ApiLogin login = new(){Username = ""};
@@ -38,6 +43,7 @@ namespace ante_up.Logic
                 login.Response = "2";
             else
             {
+                login.Token = new JWTLogic().GetToken(account.Username, account.Id);
                 login.Response = account.Id;
                 login.Username = account.Username;
             }

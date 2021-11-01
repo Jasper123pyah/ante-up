@@ -8,30 +8,52 @@ namespace ante_up.Data
 {
     public class ChatData
     {
-        private readonly AnteUpContext anteContext;
+        private readonly AnteUpContext _anteContext;
         public ChatData(AnteUpContext context)
         {
-            anteContext = context;
+            _anteContext = context;
         }
 
-        public void SendMessage(LobbyMessage lobbyMessage)
+        public void SendLobbyMessage(LobbyMessage lobbyMessage)
         {
-            Wager wager = new WagerData(anteContext).GetById(lobbyMessage.LobbyId);
+            Wager wager = new WagerData(_anteContext).GetById(lobbyMessage.LobbyId);
             Message message = new()
             {
                 Time = DateTime.Now,
                 Id = Guid.NewGuid().ToString(),
-                Sender = new AccountData(anteContext).GetAccountById(lobbyMessage.Sender).Username,
+                Sender = new AccountData(_anteContext).GetAccountById(lobbyMessage.Sender)?.Username,
                 Text = lobbyMessage.Message
             };
             wager.Chat.Message.Add(message);
-            anteContext.SaveChanges();
+            _anteContext.SaveChanges();
+        }
+        public Chat GetFriendChat(string friendName, string accountId)
+        {
+            AccountData accountData = new(_anteContext);
+            Account account = accountData.GetAccountById(accountId)!;
+            string friendId = accountData.GetAccountByUsername(friendName)!.Id;
+            
+            return account.Friendships.FirstOrDefault(x => x.AccountId1 == friendId || x.AccountId2 == friendId)
+                ?.Chat!;
+        }
+        public void SendFriendMessage(string receiver, string senderId, string message)
+        {
+            string receiverId = new AccountData(_anteContext).GetAccountByUsername(receiver)?.Id!;
+            Chat chat = GetFriendChat(receiverId, senderId);
+            chat.Message.Add(new Message()
+            {
+                Time = DateTime.Now,
+                Id = Guid.NewGuid().ToString(),
+                Text = message,
+                Sender = senderId
+            });
+            _anteContext.SaveChanges();
         }
 
-        public Chat GetWagerChat(string lobbyId)
+        public Chat? GetWagerChat(string lobbyId)
         {
-            Wager wager = new WagerData(anteContext).GetById(lobbyId);
-            return wager?.Chat;
+            Wager wager = new WagerData(_anteContext).GetById(lobbyId);
+            return wager.Chat;
         }
     }
 }

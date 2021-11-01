@@ -16,7 +16,7 @@ namespace ante_up
     {
         readonly string MyAllowSpecificOrigins = "AllowCORS";
         
-        private readonly string ante_up = Environment.GetEnvironmentVariable("conn_string_ante_up");
+        private readonly string _anteUp = Environment.GetEnvironmentVariable("conn_string_ante_up");
         
         public Startup(IConfiguration configuration)
         {
@@ -30,18 +30,16 @@ namespace ante_up
             services.AddControllers();
             
             services.AddDbContext<AnteUpContext>(options => 
-                options.UseMySql(ante_up, 
-                    ServerVersion.AutoDetect(ante_up)));
+                options.UseMySql(_anteUp, 
+                    ServerVersion.AutoDetect(_anteUp)));
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "ante_up", Version = "v1"}); });
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins("http://185.82.192.67:3000",
-                                            "localhost:3000",
-                                            "localhost:6000",
-                                            "http://192.168.178.40:3000");
+                        builder.WithOrigins("localhost:3000",
+                                            "localhost:6000");
                     });
             }); 
             services.AddSignalR(e => {
@@ -64,8 +62,10 @@ namespace ante_up
             }
             
             using (IServiceScope scope = app.ApplicationServices.CreateScope())
-            using (var context = scope.ServiceProvider.GetService<AnteUpContext>()) 
+            using (var context = scope.ServiceProvider.GetService<AnteUpContext>())
+            {
                 context.Database.EnsureCreated();
+            }
             
             app.UseCors(x => x
                 .AllowAnyMethod()

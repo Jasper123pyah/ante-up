@@ -16,11 +16,11 @@ namespace ante_up.Controllers
     [Route("[controller]")]
     public class WagerController : ControllerBase
     {
-        private readonly AnteUpContext antecontext;
+        private readonly AnteUpContext _antecontext;
 
         public WagerController(AnteUpContext context)
         {
-            antecontext = context;
+            _antecontext = context;
         }
             
         [HttpGet]
@@ -32,29 +32,29 @@ namespace ante_up.Controllers
         [HttpGet("/wager/game/{gameName}")]
         public List<ViewWager> GetWagerByGame(string gameName)
         {
-            return new WagerLogic(antecontext).GetWagersInGame(gameName);
+            return new WagerLogic(_antecontext).GetWagersInGame(gameName);
         }
 
         [HttpGet("/wager/{id}")]
         public ViewWager GetWagerById(string id)
         {
-            ViewWager viewWager = new WagerLogic(antecontext).GetWagerById(id);
+            ViewWager viewWager = new WagerLogic(_antecontext).GetWagerById(id);
             return viewWager;
         }
 
         [HttpPost("/wager")]
         public string NewWager(ApiWager newWager)
         {
-            WagerLogic logic = new(antecontext);
+            WagerLogic logic = new(_antecontext);
             logic.AddNewWager(newWager);
             
-            return new WagerLogic(antecontext).AddNewWager(newWager);
+            return new WagerLogic(_antecontext).AddNewWager(newWager);
         }
 
         [HttpGet("/wager/chat")]
         public Chat GetWagerChat(string id)
         {
-            Chat chat = new ChatData(antecontext).GetWagerChat(id);
+            Chat chat = new ChatData(_antecontext).GetWagerChat(id);
             return new ChatLogic().SortChat(chat);
         }
         
@@ -62,7 +62,7 @@ namespace ante_up.Controllers
         [HttpPost("/wager/leave")]
         public void LeaveTeam(ApiLobby apiLobby)
         {
-            new WagerData(antecontext).LeaveWager(apiLobby.WagerId, apiLobby.PlayerId);
+            new WagerData(_antecontext).LeaveWager(apiLobby.WagerId, apiLobby.PlayerId);
         }
     }
 }
