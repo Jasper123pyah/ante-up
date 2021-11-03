@@ -55,7 +55,6 @@ namespace ante_up.Controllers
             chat.SortByTime();
             return chat;
         }
-        
 
         [HttpPost("/wager/leave")]
         public void LeaveTeam(ApiLobby apiLobby)

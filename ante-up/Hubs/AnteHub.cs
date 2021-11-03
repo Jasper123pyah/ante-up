@@ -9,8 +9,6 @@ using ante_up.Data;
 using ante_up.Logic;
 using ante_up.Logic.JWT;
 using Microsoft.AspNetCore.SignalR;
-using MySqlX.XDevAPI;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace ante_up.Hubs
 {
@@ -48,6 +46,7 @@ namespace ante_up.Hubs
         }
         public async Task JoinLobby(LobbyUser lobbyJoiner)
         {
+            lobbyJoiner.User = _jwtLogic.GetId(lobbyJoiner.User);
             await Groups.AddToGroupAsync(Context.ConnectionId,  lobbyJoiner.Lobby);
             
             _wagerData.JoinTeam(lobbyJoiner.Lobby, lobbyJoiner.User, lobbyJoiner.Team);
