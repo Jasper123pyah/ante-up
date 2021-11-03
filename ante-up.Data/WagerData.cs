@@ -74,17 +74,17 @@ namespace ante_up.Data
         public Wager GetById(string id)
         {
             return anteContext.Wager.Include(team1 => team1.Team1)
-                                    .ThenInclude(x => x.Players)
-                                    .Include(team2 => team2.Team2)
-                                    .ThenInclude(x => x.Players)
-                                    .Include(x => x.Chat)
-                                    .ThenInclude(x => x.Message)
-                                    .FirstOrDefault(wager => wager.Id == id);
+                .ThenInclude(x => x.Players)
+                .Include(team2 => team2.Team2)
+                .ThenInclude(x => x.Players)
+                .Include(x => x.Chat)
+                .ThenInclude(x => x.Message)
+                .FirstOrDefault(wager => wager.Id == id)!;
         }
 
-        public Wager GetAccountWager(string accountId)
+        public Wager? GetAccountWager(string accountId)
         {
-            Account account = new AccountData(anteContext).GetAccountById(accountId);
+            Account account = new AccountData(anteContext).GetAccountById(accountId)!;
             if (account.Team == null)
                 return null;
             if (anteContext.Wager.FirstOrDefault(e => e.Team1.Players.Contains(account)) != null)

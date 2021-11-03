@@ -12,7 +12,6 @@ namespace ante_up.Common.DataModels
         public string Password { get; set; }
         public int Balance { get; set; }
         public Team Team { get; set; }
-        public List<Friendship> Friendships { get; set; }
         public List<ConnectionId> ConnectionIds { get; set; }
         public List<FriendRequest> FriendRequests { get; set; }
         public PlayerStats Stats { get; set; }

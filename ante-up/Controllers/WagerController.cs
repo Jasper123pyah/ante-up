@@ -16,11 +16,13 @@ namespace ante_up.Controllers
     [Route("[controller]")]
     public class WagerController : ControllerBase
     {
-        private readonly AnteUpContext _antecontext;
+        private readonly AnteUpContext _anteUpContext;
+        private readonly WagerLogic _wagerLogic;
 
         public WagerController(AnteUpContext context)
         {
-            _antecontext = context;
+            _anteUpContext = context;
+            _wagerLogic = new WagerLogic(context);
         }
             
         [HttpGet]
@@ -32,29 +34,26 @@ namespace ante_up.Controllers
         [HttpGet("/wager/game/{gameName}")]
         public List<ViewWager> GetWagerByGame(string gameName)
         {
-            return new WagerLogic(_antecontext).GetWagersInGame(gameName);
+            return _wagerLogic.GetWagersInGame(gameName);
         }
 
         [HttpGet("/wager/{id}")]
         public ViewWager GetWagerById(string id)
         {
-            ViewWager viewWager = new WagerLogic(_antecontext).GetWagerById(id);
+            ViewWager viewWager =_wagerLogic.GetWagerById(id);
             return viewWager;
         }
 
         [HttpPost("/wager")]
         public string NewWager(ApiWager newWager)
         {
-            WagerLogic logic = new(_antecontext);
-            logic.AddNewWager(newWager);
-            
-            return new WagerLogic(_antecontext).AddNewWager(newWager);
+            return _wagerLogic.AddNewWager(newWager);
         }
 
         [HttpGet("/wager/chat")]
         public Chat GetWagerChat(string id)
         {
-            Chat chat = new ChatData(_antecontext).GetWagerChat(id);
+            Chat chat = new ChatData(_anteUpContext).GetWagerChat(id);
             return new ChatLogic().SortChat(chat);
         }
         
@@ -62,7 +61,7 @@ namespace ante_up.Controllers
         [HttpPost("/wager/leave")]
         public void LeaveTeam(ApiLobby apiLobby)
         {
-            new WagerData(_antecontext).LeaveWager(apiLobby.WagerId, apiLobby.PlayerId);
+            new WagerData(_anteUpContext).LeaveWager(apiLobby.WagerId, apiLobby.PlayerId);
         }
     }
 }

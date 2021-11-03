@@ -11,6 +11,8 @@ namespace ante_up.Data
         public DbSet<Chat> Chat { get; set; }
         public DbSet<Team> Team { get; set; }
         public DbSet<ConnectionId> ConnectionId { get; set; }
+        public DbSet<Friendship> Friendship { get; set; }
+        public DbSet<FriendRequest> FriendRequest { get; set; }
         public AnteUpContext(DbContextOptions options) : base(options){}
 
     }

@@ -21,6 +21,7 @@ namespace ante_up.Hubs
         private readonly AccountData _accountData;
         private readonly WagerData _wagerData;
         private readonly ChatData _chatData;
+        private readonly FriendData _friendData;
         public AnteHub(AnteUpContext context)
         {
             _anteUpContext = context;
@@ -28,6 +29,7 @@ namespace ante_up.Hubs
             _accountData = new AccountData(context);
             _wagerData = new WagerData(context);
             _chatData = new ChatData(context);
+            _friendData = new FriendData(context);
         }
         public async Task CreateLobby(LobbyUser lobbyJoiner)
         {
@@ -80,7 +82,8 @@ namespace ante_up.Hubs
         }
         public async Task SendFriendRequest(HubFriend hubFriend)
         {
-            string result = _accountData.FriendRequest(hubFriend.FriendName, hubFriend.AccountId);
+            string accountId = _jwtLogic.GetId(hubFriend.Token);
+            string result = _friendData.FriendRequest(hubFriend.FriendName, accountId);
             
             if (result == "Person not found" ||
                 result == "Already friends" ||
@@ -90,17 +93,19 @@ namespace ante_up.Hubs
             else
             {
                 await Clients.Caller.SendAsync("Friendrequest Sent", hubFriend.FriendName);
-                await Clients.User(result).SendAsync("Friendrequest Received");
+                foreach (string id in _accountData.GetConnectionIds(result))
+                {
+                    await Clients.User(id).SendAsync("Friendrequest Received");
+                }
             }
         }
         public async Task SendFriendMessage(FriendMessage friendMessage)
         {
-            string sender = _jwtLogic.GetId(friendMessage.Sender);
+            string senderId = _jwtLogic.GetId(friendMessage.Sender);
             
-            _chatData.SendFriendMessage(friendMessage.Receiver, sender, friendMessage.Message);
+            _chatData.SendFriendMessage(friendMessage.Receiver, senderId, friendMessage.Message);
             await Clients.Caller.SendAsync("NewFriendMessage");
-
-            foreach (string id in _accountData.GetConnectionIds(_accountData.GetAccountByUsername(friendMessage.Receiver)?.Id!))
+            foreach (string id in _accountData.GetConnectionIds(_accountData.GetAccountIdByUsername(friendMessage.Receiver)!))
             {
                 await Clients.User(id).SendAsync("NewFriendMessage");
             }
