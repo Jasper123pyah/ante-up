@@ -4,8 +4,14 @@ namespace ante_up.Common.DataModels
 {
     public class Game
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Image { get; set; }
+        public Guid Id { get; set; }
+        public string Name { get; }
+        public string Image { get; }
+
+        public Game(string name, string image)
+        {
+            Name = name;
+            Image = image;
+        }
     }
 }

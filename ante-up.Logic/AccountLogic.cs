@@ -40,8 +40,8 @@ namespace ante_up.Logic
                 login.Response = "2";
             else
             {
-                login.Token = new JWTLogic().GetToken(account.Username, account.Id);
-                login.Response = account.Id;
+                login.Token = new JWTLogic().GetToken(account.Username, account.GetId());
+                login.Response = account.GetId();
                 login.Username = account.Username;
             }
                  

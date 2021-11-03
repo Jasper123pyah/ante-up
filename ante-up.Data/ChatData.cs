@@ -23,14 +23,8 @@ namespace ante_up.Data
         public void SendLobbyMessage(LobbyMessage lobbyMessage)
         {
             Wager wager = _wagerData.GetById(lobbyMessage.LobbyId);
-            Message message = new()
-            {
-                Time = DateTime.Now,
-                Id = Guid.NewGuid().ToString(),
-                Sender = _accountData.GetAccountById(lobbyMessage.Sender)?.Username,
-                Text = lobbyMessage.Message
-            };
-            wager.Chat.Message.Add(message);
+            Message message = new(_accountData.GetAccountById(lobbyMessage.Sender)?.Username, lobbyMessage.Message);
+            wager.Chat.AddMessage(message);
             _anteContext.SaveChanges();
         }
         public Chat GetFriendChat(string friendId, string accountId)
@@ -40,14 +34,10 @@ namespace ante_up.Data
         public void SendFriendMessage(string receiver, string senderId, string message)
         {
             string? receiverId = _accountData.GetAccountIdByUsername(receiver);
+            string? senderName = _accountData.GetAccountById(senderId)?.Username;
+            
             Chat chat = GetFriendChat(receiverId!, senderId);
-            chat.Message.Add(new Message()
-            {
-                Time = DateTime.Now,
-                Id = Guid.NewGuid().ToString(),
-                Text = message,
-                Sender = senderId
-            });
+            chat.AddMessage(new Message(senderName, message));
             _anteContext.SaveChanges();
         }
 

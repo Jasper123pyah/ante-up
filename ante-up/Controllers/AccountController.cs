@@ -24,6 +24,7 @@ namespace ante_up.Controllers
         private readonly AccountData _accountData;
         private readonly AccountLogic _accountLogic;
         private readonly FriendData _friendData;
+        private readonly FriendLogic _friendLogic;
         public AccountController(AnteUpContext context)
         {
             _anteUpContext = context;
@@ -31,6 +32,7 @@ namespace ante_up.Controllers
             _accountData = new AccountData(context);
             _accountLogic = new AccountLogic(context);
             _friendData = new FriendData(context);
+            _friendLogic = new FriendLogic(context);
         }
         
         [HttpPost("/account/register")]
@@ -50,7 +52,8 @@ namespace ante_up.Controllers
         {
             string accountId = _jwtLogic.GetId(apiFriendChat.Token);
             Chat chat = new ChatData(_anteUpContext).GetFriendChat(apiFriendChat.FriendName, accountId);
-            return new ChatLogic().SortChat(chat);
+            chat.SortByTime();
+            return chat;
         }
         [HttpGet("/account/friendrequests/{token}")]
         public List<string> GetFriendRequests(string token)
@@ -75,7 +78,7 @@ namespace ante_up.Controllers
         public void RespondToFriendRequest(ApiFriendRequestResponse response)
         {
             string accountId = _jwtLogic.GetId(response.Token);
-            _friendData.FriendRequestResponse(accountId, response.Accepted, response.FriendName);
+            _friendLogic.FriendRequestResponse(accountId, response.Accepted, response.FriendName);
         }
         
         [HttpPost("/account/login")]

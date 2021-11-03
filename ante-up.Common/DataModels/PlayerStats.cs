@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace ante_up.Common.DataModels
@@ -5,6 +6,6 @@ namespace ante_up.Common.DataModels
     public class PlayerStats
     {
         [Key]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

@@ -18,16 +18,11 @@ namespace ante_up.Data
 
         public void DeleteAccount(string accountId)
         {
-            Account ?account = _anteContext.Account.FirstOrDefault(x => x.Id == accountId);
-            _anteContext.Account.Remove(account);
+            Account ?account = GetAccountById(accountId);
+            if (account != null) 
+                _anteContext.Account.Remove(account);
         }
-        public List<string> GetConnectionIds(string accountId)
-        {
-            Account account = GetAccountById(accountId)!;
-            return account.ConnectionIds.Select(connId => connId.Connection).ToList();
-        }
-
-
+        
         public void RemoveConnectionId(string connectionId, string accountId)
         {
             Account? account = GetAccountById(accountId);
@@ -39,32 +34,24 @@ namespace ante_up.Data
         public void SaveConnectionId(string connectionId, string accountId)
         {
             Account? account = GetAccountById(accountId);
-            account?.ConnectionIds.Add(new ConnectionId() {Id = Guid.NewGuid().ToString(), Connection = connectionId});
+            account?.AddConnectionId(connectionId);
             _anteContext.SaveChanges();
         }
 
         public void Register(ApiAccount account)
         {
-            _anteContext.Account.Add(new Account
-            {
-                Id = Guid.NewGuid().ToString(),
-                Balance = 0,
-                Email = account.Email,
-                Username = account.Username,
-                Password = account.Password,
-                ConnectionIds = new List<ConnectionId>()
-            });
+            _anteContext.Account.Add(new Account(account.Email, account.Username, account.Password));
             _anteContext.SaveChanges();
         }
 
         public string? GetAccountIdByEmail(string accountEmail)
         {
-            return _anteContext.Account.FirstOrDefault(e => e.Email == accountEmail)?.Id;
+            return _anteContext.Account.FirstOrDefault(e => e.Email == accountEmail)?.GetId();
         }
 
         public string? GetAccountIdByUsername(string username)
         {
-            return _anteContext.Account.FirstOrDefault(e => e.Username == username)?.Id;
+            return _anteContext.Account.FirstOrDefault(e => e.Username == username)?.GetId();
         }
 
         public Account? GetAccountById(string? id)
@@ -73,7 +60,7 @@ namespace ante_up.Data
                 .Include(x => x.FriendRequests)
                 .Include(x => x.Team)
                 .ThenInclude(x => x.Players)
-                .FirstOrDefault(e => e.Id == id);
+                .FirstOrDefault(e => e.GetId() == id);
         }
     }
 }

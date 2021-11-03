@@ -17,7 +17,7 @@ namespace ante_up.Data
             _accountData = new AccountData(context);
         }
 
-        public List<string> GetFriends(string accountId) // returns list of usernames of friends
+        public List<string> GetFriends(string accountId) // returns list of usernames of friends of account
         {
             List<string?> userNames = new();
             List<Friendship> friendships = _anteContext.Friendship.Where(x => x.AccountId1 == accountId
@@ -33,65 +33,43 @@ namespace ante_up.Data
             return userNames;
         }
 
-        public List<string> GetFriendRequests(string accountId)
+        public List<string>? GetFriendRequests(string accountId)
         {
-            return _accountData.GetAccountById(accountId)?.FriendRequests
-                .Select(requester => _accountData.GetAccountById(requester.RequesterId)?.Username).ToList()!;
-        }
-
-        public string FriendRequest(string friendName, string accountId)
-        {
-            Account? friend = _accountData.GetAccountById(_accountData.GetAccountIdByUsername(friendName));
-            if (friend?.Id == null)
-                return "Person not found";
-            if (GetFriendRequests(friend.Id)!.Contains(accountId))
-                return "Person already added";
-            if (GetFriends(accountId).Contains(friendName))
-                return "Already friends";
-            if (friendName == _accountData.GetAccountById(accountId)?.Username)
-                return "Can't add yourself as friend";
-            else
-            {
-                friend.FriendRequests.Add(new FriendRequest {Id = Guid.NewGuid().ToString(), RequesterId = accountId});
-                _anteContext.SaveChanges();
-
-                return friend.Id;
-            }
+            return _accountData.GetAccountById(accountId)?.FriendRequests.Select(x => x.RequesterName).ToList();
         }
 
         public Friendship GetFriendShip(string accountId, string? friendId)
         {
             return _anteContext.Friendship.Include(x => x.Chat)
-                .ThenInclude(x => x.Message)
+                .ThenInclude(x => x.Messages)
                 .FirstOrDefault(x =>
                     x.AccountId1 == accountId || x.AccountId1 == friendId &&
                     x.AccountId2 == accountId || x.AccountId2 == friendId)!;
         }
 
-        public void FriendRequestResponse(string accountId, bool accepted, string friendName)
+        public void CreateFriendRequest(Account account, string requesterId, string requesterName)
         {
-            Account account = _accountData.GetAccountById(accountId)!;
-            Account friend = _accountData.GetAccountById(_accountData.GetAccountIdByUsername(friendName))!;
-            if (accepted)
-            {
-                Friendship friendShip = new()
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    AccountId1 = account.Id,
-                    AccountId2 = friend.Id,
-                    Chat = new Chat() {Id = Guid.NewGuid().ToString(), Message = new List<Message>()}
-                };
-                _anteContext.Friendship.Add(friendShip);
-            }
+            account.FriendRequests.Add(new FriendRequest(requesterId, requesterName));
+            _anteContext.SaveChanges();
+        }
+        public void CreateFriendShip(Account account1, Account account2)
+        {
+            Friendship friendShip = new(account1.GetId(), account2.GetId());
+            _anteContext.Friendship.Add(friendShip);
+            _anteContext.SaveChanges();
+        }
 
-            FriendRequest? accountRequest = account.FriendRequests.FirstOrDefault(x => x.RequesterId == friend.Id);
-            FriendRequest? friendRequest = friend.FriendRequests.FirstOrDefault(x => x.RequesterId == account.Id);
-            if (accountRequest != null)
-                _anteContext.FriendRequest.Remove(accountRequest);
-            if (friendRequest != null)
-                _anteContext.FriendRequest.Remove(friendRequest);
+        public void RemoveFriendRequests(Account account1, Account account2)
+        {
+            FriendRequest? account1Request = account1.FriendRequests.FirstOrDefault(x => x.RequesterId == account2.GetId());
+            FriendRequest? account2Request = account2.FriendRequests.FirstOrDefault(x => x.RequesterId == account1.GetId());
+            if (account1Request != null)
+                _anteContext.FriendRequest.Remove(account1Request);
+            if (account2Request != null)
+                _anteContext.FriendRequest.Remove(account2Request);
 
             _anteContext.SaveChanges();
         }
+        
     }
 }

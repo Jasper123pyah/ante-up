@@ -12,13 +12,7 @@ namespace ante_up.Tests
         [Test]
         public void TestIfLoginPasses()
         {
-            Account account = new()
-            {
-                Id = "123abc",
-                Username = "User",
-                Email = "email@gmail.com",
-                Password = BCrypt.Net.BCrypt.HashPassword("verysecretpassword")
-            };
+            Account account = new("email@gmail.com", "User", BCrypt.Net.BCrypt.HashPassword("verysecretpassword"));
             string response = new AccountLogic().LoginCheck(account, "verysecretpassword").Response;
 
             bool result = response == "123abc";
@@ -26,12 +20,6 @@ namespace ante_up.Tests
             Assert.IsTrue(result);
         }
 
-        [Test]
-        public void TestIfAccountGetsDeleted()
-        {
-            
-        }
-        
         [Test]
         public void TestIfRegisterPasses()
         {

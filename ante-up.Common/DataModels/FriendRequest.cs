@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace ante_up.Common.DataModels
@@ -5,7 +6,15 @@ namespace ante_up.Common.DataModels
     public class FriendRequest
     {
         [Key]
-        public string Id { get; set; }
-        public string RequesterId { get; set; }
+        public Guid Id { get;  }
+        public string RequesterId { get; }
+        public string RequesterName { get; }
+
+        public FriendRequest(string requesterId, string requesterName)
+        {
+            RequesterId = requesterId;
+            RequesterName = requesterName;
+        }
+        
     }
 }

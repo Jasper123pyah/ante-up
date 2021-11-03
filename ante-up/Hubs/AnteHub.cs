@@ -21,7 +21,7 @@ namespace ante_up.Hubs
         private readonly AccountData _accountData;
         private readonly WagerData _wagerData;
         private readonly ChatData _chatData;
-        private readonly FriendData _friendData;
+        private readonly FriendLogic _friendLogic;
         public AnteHub(AnteUpContext context)
         {
             _anteUpContext = context;
@@ -29,7 +29,7 @@ namespace ante_up.Hubs
             _accountData = new AccountData(context);
             _wagerData = new WagerData(context);
             _chatData = new ChatData(context);
-            _friendData = new FriendData(context);
+            _friendLogic = new FriendLogic(context);
         }
         public async Task CreateLobby(LobbyUser lobbyJoiner)
         {
@@ -64,7 +64,7 @@ namespace ante_up.Hubs
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyLeaver.Lobby);
             
-            _wagerData.LeaveWager(lobbyLeaver.Lobby, lobbyLeaver.User);
+            _wagerData.LeaveWager(_wagerData.GetById(lobbyLeaver.Lobby), lobbyLeaver.User);
             
             if (new WagerLogic(_anteUpContext).GetWagerById(lobbyLeaver.Lobby) == null)
             {
@@ -83,17 +83,16 @@ namespace ante_up.Hubs
         public async Task SendFriendRequest(HubFriend hubFriend)
         {
             string accountId = _jwtLogic.GetId(hubFriend.Token);
-            string result = _friendData.FriendRequest(hubFriend.FriendName, accountId);
+            string result = _friendLogic.FriendRequest(hubFriend.FriendName, accountId);
             
-            if (result == "Person not found" ||
-                result == "Already friends" ||
-                result == "Person already added" ||
-                result == "Can't add yourself as friend")
+            if (result != FriendRequestResponses.Success.GetDescription())
                 await Clients.Caller.SendAsync("AddFriendError", result);
             else
             {
                 await Clients.Caller.SendAsync("Friendrequest Sent", hubFriend.FriendName);
-                foreach (string id in _accountData.GetConnectionIds(result))
+                string friendId = _accountData.GetAccountIdByUsername(hubFriend.FriendName);
+                Account friend = _accountData.GetAccountById(friendId);
+                foreach (string id in friend.GetConnectionIds())
                 {
                     await Clients.User(id).SendAsync("Friendrequest Received");
                 }
@@ -105,7 +104,7 @@ namespace ante_up.Hubs
             
             _chatData.SendFriendMessage(friendMessage.Receiver, senderId, friendMessage.Message);
             await Clients.Caller.SendAsync("NewFriendMessage");
-            foreach (string id in _accountData.GetConnectionIds(_accountData.GetAccountIdByUsername(friendMessage.Receiver)!))
+            foreach (string id in _accountData.GetAccountById(_accountData.GetAccountIdByUsername(friendMessage.Receiver))?.GetConnectionIds()!)
             {
                 await Clients.User(id).SendAsync("NewFriendMessage");
             }

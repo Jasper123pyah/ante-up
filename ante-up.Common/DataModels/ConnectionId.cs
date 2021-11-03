@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace ante_up.Common.DataModels
@@ -5,8 +6,17 @@ namespace ante_up.Common.DataModels
     public class ConnectionId
     {
         [Key]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
-        public string Connection { get; set; }
+        public string Connection { get;  }
+
+        public ConnectionId(string connectionId)
+        {
+            Connection = connectionId;
+        }
+        public string GetId()
+        {
+            return Id.ToString();
+        }
     }
 }
