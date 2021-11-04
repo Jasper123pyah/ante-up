@@ -23,6 +23,7 @@ namespace ante_up.Logic
             
             ApiAccountInfo accountInfo = new()
             {
+                Id = id,
                 Username = acc.Username,
                 Balance = acc.Balance,
                 Email = acc.Email
@@ -35,29 +36,27 @@ namespace ante_up.Logic
         {
             ApiLogin login = new(){Username = ""};
             if (account == null)
-                 login.Response = "1";
-            else if (!BCrypt.Net.BCrypt.Verify(password,account.Password))
-                login.Response = "2";
+                throw new ApiException(404, "Account not found.");
+            if (!BCrypt.Net.BCrypt.Verify(password, account.Password))
+                throw new ApiException(401, "Wrong password.");
             else
             {
-                login.Token = new JWTLogic().GetToken(account.Username, account.GetId());
-                login.Response = account.GetId();
+                login.Token = new JWTLogic().GetToken(account.Username, account.Id.ToString());
                 login.Username = account.Username;
             }
                  
             return login ;
         }
-        public string Register(ApiAccount account)
+        public void Register(ApiAccount account)
         {
             if (accountData.GetAccountIdByEmail(account.Email) != null)
-                return "Email is already taken.";
+                throw new ApiException(409, "Email is already taken.");
             if (accountData.GetAccountIdByUsername(account.Username) != null)
-                return "Username is already taken.";
+                throw new ApiException(409, "Username is already taken.") ; ;
 
             account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
             if(_anteUpContext != null)
                 accountData.Register(account);
-            return "";
         }
     }
 }

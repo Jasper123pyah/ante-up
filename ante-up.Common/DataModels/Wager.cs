@@ -6,17 +6,18 @@ namespace ante_up.Common.DataModels
     public class Wager
     {
         public Guid Id { get; set; }
-        public string Game { get;  }
-        public string Title { get;  }
-        public string Description { get;  }
+        public string Game { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set;  }
         public string HostId { get; set; }
-        public string HostName { get;  }
-        public int Ante { get;  }
-        public int PlayerCap { get;  }
-        public Team Team1 { get;  }
-        public Team Team2 { get;  }
-        public Chat Chat { get;  }
+        public string HostName { get;set;  }
+        public int Ante { get; set; }
+        public int PlayerCap { get;set;  }
+        public Team Team1 { get;set;  }
+        public Team Team2 { get; set; }
+        public Chat Chat { get; set; }
 
+        public Wager(){}
         public Wager(string game, string title, string description, string hostId, string hostName, int ante, int playerCap)
         {
             Game = game;
@@ -31,9 +32,5 @@ namespace ante_up.Common.DataModels
             Chat = new Chat();
         }
 
-        public string GetId()
-        {
-            return Id.ToString();
-        }
     }
 }

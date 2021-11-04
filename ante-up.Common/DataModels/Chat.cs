@@ -16,10 +16,6 @@ namespace ante_up.Common.DataModels
         {
             Messages = new List<Message>();
         }
-        public string GetId()
-        {
-            return Id.ToString();
-        }
 
         public void AddMessage(Message message)
         {

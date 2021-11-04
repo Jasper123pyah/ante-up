@@ -46,12 +46,12 @@ namespace ante_up.Data
 
         public string? GetAccountIdByEmail(string accountEmail)
         {
-            return _anteContext.Account.FirstOrDefault(e => e.Email == accountEmail)?.GetId();
+            return _anteContext.Account.FirstOrDefault(e => e.Email == accountEmail)?.Id.ToString();
         }
 
         public string? GetAccountIdByUsername(string username)
         {
-            return _anteContext.Account.FirstOrDefault(e => e.Username == username)?.GetId();
+            return _anteContext.Account.FirstOrDefault(e => e.Username == username)?.Id.ToString();
         }
 
         public Account? GetAccountById(string? id)
@@ -60,7 +60,7 @@ namespace ante_up.Data
                 .Include(x => x.FriendRequests)
                 .Include(x => x.Team)
                 .ThenInclude(x => x.Players)
-                .FirstOrDefault(e => e.GetId() == id);
+                .FirstOrDefault(a => a.Id.ToString() == id);
         }
     }
 }

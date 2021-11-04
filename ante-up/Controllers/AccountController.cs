@@ -25,6 +25,7 @@ namespace ante_up.Controllers
         private readonly AccountLogic _accountLogic;
         private readonly FriendData _friendData;
         private readonly FriendLogic _friendLogic;
+
         public AccountController(AnteUpContext context)
         {
             _anteUpContext = context;
@@ -34,11 +35,12 @@ namespace ante_up.Controllers
             _friendData = new FriendData(context);
             _friendLogic = new FriendLogic(context);
         }
-        
+
         [HttpPost("/account/register")]
-        public string Register(ApiAccount newAccount)
+        public IActionResult Register(ApiAccount newAccount)
         {
-            return _accountLogic.Register(newAccount);;
+            _accountLogic.Register(newAccount);
+            return StatusCode(200);
         }
 
         [HttpGet("/account/friends/{token}")]
@@ -47,6 +49,7 @@ namespace ante_up.Controllers
             string id = _jwtLogic.GetId(token);
             return _friendData.GetFriends(id);
         }
+
         [HttpGet("/account/friend/chat")]
         public Chat GetFriendChat(ApiFriendChat apiFriendChat)
         {
@@ -55,6 +58,7 @@ namespace ante_up.Controllers
             chat.SortByTime();
             return chat;
         }
+
         [HttpGet("/account/friendrequests/{token}")]
         public List<string> GetFriendRequests(string token)
         {
@@ -68,7 +72,7 @@ namespace ante_up.Controllers
         {
             if (token == null)
                 return new ApiAccountInfo();
-            
+
             string id = _jwtLogic.GetId(token);
             ApiAccountInfo accountInfo = _accountLogic.GetAccountInfo(id);
             return accountInfo;
@@ -80,13 +84,12 @@ namespace ante_up.Controllers
             string accountId = _jwtLogic.GetId(response.Token);
             _friendLogic.FriendRequestResponse(accountId, response.Accepted, response.FriendName);
         }
-        
+
         [HttpPost("/account/login")]
         public ApiLogin Login(ApiAccount login)
         {
             Account account = _accountData.GetAccountById(_accountData.GetAccountIdByEmail(login.Email)!);
             return _accountLogic.LoginCheck(account, login.Password);
         }
-  
     }
 }

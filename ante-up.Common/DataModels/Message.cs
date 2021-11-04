@@ -5,11 +5,14 @@ namespace ante_up.Common.DataModels
 {
     public class Message
     {
-        [Key]
-        public Guid Id { get; set; }
-        public string SenderName { get; }
-        public string Text { get;  }
-        public DateTime Time { get;  }
+        [Key] public Guid Id { get; set; }
+        public string SenderName { get; set; }
+        public string Text { get; set; }
+        public DateTime Time { get; set; }
+
+        public Message()
+        {
+        }
 
         public Message(string senderName, string text)
         {

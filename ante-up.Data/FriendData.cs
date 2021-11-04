@@ -54,15 +54,15 @@ namespace ante_up.Data
         }
         public void CreateFriendShip(Account account1, Account account2)
         {
-            Friendship friendShip = new(account1.GetId(), account2.GetId());
+            Friendship friendShip = new(account1.Id.ToString(), account2.Id.ToString());
             _anteContext.Friendship.Add(friendShip);
             _anteContext.SaveChanges();
         }
 
         public void RemoveFriendRequests(Account account1, Account account2)
         {
-            FriendRequest? account1Request = account1.FriendRequests.FirstOrDefault(x => x.RequesterId == account2.GetId());
-            FriendRequest? account2Request = account2.FriendRequests.FirstOrDefault(x => x.RequesterId == account1.GetId());
+            FriendRequest? account1Request = account1.FriendRequests.FirstOrDefault(x => x.RequesterId == account2.Id.ToString());
+            FriendRequest? account2Request = account2.FriendRequests.FirstOrDefault(x => x.RequesterId == account1.Id.ToString());
             if (account1Request != null)
                 _anteContext.FriendRequest.Remove(account1Request);
             if (account2Request != null)

@@ -13,6 +13,12 @@ namespace ante_up.Data
         public DbSet<ConnectionId> ConnectionId { get; set; }
         public DbSet<Friendship> Friendship { get; set; }
         public DbSet<FriendRequest> FriendRequest { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Account>().HasKey(x => x.Id);
+            modelBuilder.Entity<FriendRequest>().HasKey(x => x.Id);
+            
+        }
         public AnteUpContext(DbContextOptions options) : base(options){}
 
     }

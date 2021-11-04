@@ -6,18 +6,13 @@ namespace ante_up.Common.DataModels
 {
     public class Team
     {
-        [Key]
-        public Guid Id { get; set; }
-        public List<Account> Players { get;  }
-        
+        [Key] public Guid Id { get; set; }
+        public List<Account> Players { get; set; }
+
         public Team()
         {
             Players = new List<Account>();
         }
 
-        public string GetId()
-        {
-            return Id.ToString();
-        }
     }
 }

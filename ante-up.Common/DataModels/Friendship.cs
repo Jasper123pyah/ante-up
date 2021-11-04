@@ -7,10 +7,11 @@ namespace ante_up.Common.DataModels
     {
         [Key]
         public Guid Id { get; set; }
-        public Chat Chat { get;  }
-        public string AccountId1 { get;  }
-        public string AccountId2 { get;  }
+        public Chat Chat { get; set; }
+        public string AccountId1 { get; set; }
+        public string AccountId2 { get; set; }
 
+        public Friendship(){}
         public Friendship(string accountId1, string accountId2)
         {
             Chat = new Chat();

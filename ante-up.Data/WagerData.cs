@@ -21,7 +21,7 @@ namespace ante_up.Data
             _anteContext.Wager.Add(newWager);
             _anteContext.SaveChanges();
 
-            return GetByHostId(newWager.HostId).GetId();
+            return GetByHostId(newWager.HostId).Id.ToString();
         }
         
         public void LeaveWager(Wager wager, string accountId)
@@ -29,12 +29,12 @@ namespace ante_up.Data
             Account account = _accountData.GetAccountById(accountId)!;
             
             RemoveFromTeam(wager, account);
-            if (wager.HostId == account.GetId())
+            if (wager.HostId == account.Id.ToString())
             {
                 if(wager.Team1.Players.FirstOrDefault()?.Id != null)
-                    wager.HostId = wager.Team1.Players.FirstOrDefault()?.GetId();
+                    wager.HostId = wager.Team1.Players.FirstOrDefault()?.Id.ToString();
                 else if (wager.Team2.Players.FirstOrDefault()?.Id != null)
-                    wager.HostId = wager.Team2.Players.FirstOrDefault()?.GetId();
+                    wager.HostId = wager.Team2.Players.FirstOrDefault()?.Id.ToString();
                 else DeleteWager(wager);
             }
             _anteContext.SaveChanges();
@@ -78,7 +78,7 @@ namespace ante_up.Data
                 .ThenInclude(x => x.Players)
                 .Include(x => x.Chat)
                 .ThenInclude(x => x.Messages)
-                .FirstOrDefault(wager => wager.GetId() == id)!;
+                .FirstOrDefault(wager => wager.Id.ToString() == id);
         }
         private Wager GetByHostId(string hostId)
         {

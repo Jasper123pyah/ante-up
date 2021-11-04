@@ -7,9 +7,10 @@ namespace ante_up.Common.DataModels
     {
         [Key]
         public Guid Id { get;  }
-        public string RequesterId { get; }
-        public string RequesterName { get; }
+        public string RequesterId { get;set; }
+        public string RequesterName { get;set; }
 
+        public FriendRequest(){}
         public FriendRequest(string requesterId, string requesterName)
         {
             RequesterId = requesterId;

@@ -20,12 +20,14 @@ namespace ante_up.Controllers
     {
         private readonly AnteUpContext _anteUpContext;
         private readonly WagerLogic _wagerLogic;
+        private readonly WagerData _wagerData;
         private readonly JWTLogic _jwtLogic;
         public WagerController(AnteUpContext context)
         {
             _anteUpContext = context;
             _wagerLogic = new WagerLogic(context);
             _jwtLogic = new JWTLogic();
+            _wagerData = new WagerData(context);
         }
 
         [HttpGet("/wager/game/{gameName}")]
@@ -37,12 +39,13 @@ namespace ante_up.Controllers
         [HttpGet("/wager/{id}")]
         public ViewWager GetWagerById(string id)
         {
-            ViewWager viewWager =_wagerLogic.GetWagerById(id);
+            Wager wager = _wagerData.GetById(id);
+            ViewWager viewWager =_wagerLogic.CreateViewWager(wager);
             return viewWager;
         }
 
         [HttpPost("/wager")]
-        public LobbyUser NewWager(ApiWager newWager)
+        public string NewWager(ApiWager newWager)
         {
             newWager.CreatorId = _jwtLogic.GetId(newWager.CreatorId);
             return _wagerLogic.AddNewWager(newWager);

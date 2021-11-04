@@ -33,12 +33,8 @@ namespace ante_up.Logic
             };
         }
         
-        public ViewWager GetWagerById(string id)
+        public ViewWager CreateViewWager(Wager wager)
         {
-            Wager wager = _wagerData.GetById(id);
-            if (wager == null)
-                return null;
-
             wager.Chat.SortByTime();
 
             ViewWager viewWager = ConvertWager(wager);
@@ -53,7 +49,7 @@ namespace ante_up.Logic
         {
             ViewWager viewWager = new()
             {
-                Id = wager.GetId(),
+                Id = wager.Id.ToString(),
                 Game = wager.Game,
                 Title = wager.Title,
                 Description = wager.Description,
@@ -63,12 +59,12 @@ namespace ante_up.Logic
                 PlayerCap = wager.PlayerCap,
                 Team1 = new ViewTeam()
                 {
-                    Id = wager.Team1.GetId(),
+                    Id = wager.Team1.Id.ToString(),
                     Players = ConvertAccounts(wager.Team1.Players)
                 },
                 Team2 = new ViewTeam()
                 {
-                    Id = wager.Team2.GetId(),
+                    Id = wager.Team2.Id.ToString(),
                     Players = ConvertAccounts(wager.Team2.Players)
                 },
                 Chat = wager.Chat
@@ -80,13 +76,13 @@ namespace ante_up.Logic
         {
             return accounts.Select(account => new ViewAccount()
             {
-                Id = account.GetId(), 
+                Id = account.Id.ToString(), 
                 Username = account.Username, 
-                TeamId = account.Team.GetId()
+                TeamId = account.Team.Id.ToString()
             }).ToList();
         }
         
-        public LobbyUser AddNewWager(ApiWager newWager)
+        public string AddNewWager(ApiWager newWager)
         {
             Account account = _accountData.GetAccountById(newWager.CreatorId);
             Wager wager = new(
@@ -98,15 +94,14 @@ namespace ante_up.Logic
                 newWager.Ante,
                 GetPlayerCap(newWager.LobbySize));
             
-            Wager currentWager = _wagerData.GetAccountWager(account.GetId());
+            Wager currentWager = _wagerData.GetAccountWager(account.Id.ToString());
             if(currentWager != null)
-                _wagerData.LeaveWager(currentWager, account.GetId());
+                _wagerData.LeaveWager(currentWager, account.Id.ToString());
             
             wager.Team1.Players.Add(account);
             account.SetTeam(wager.Team1);
             
-            string wagerId = _wagerData.AddNewWager(wager);
-            return new LobbyUser() {Lobby = wagerId, User = account.GetId()};
+            return _wagerData.AddNewWager(wager);
         }
 
         public void LeaveWager( ApiLobby apiLobby)

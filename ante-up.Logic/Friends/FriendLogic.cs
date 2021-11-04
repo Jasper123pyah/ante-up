@@ -19,7 +19,7 @@ namespace ante_up.Logic
             Account account = _accountData.GetAccountById(accountId);
             if (friend?.Id == null)
                 return FriendRequestResponses.NotFound.GetDescription();
-            if (_friendData.GetFriendRequests(friend.GetId())!.Contains(accountId))
+            if (_friendData.GetFriendRequests(friend.Id.ToString())!.Contains(accountId))
                 return FriendRequestResponses.AlreadyAdded.GetDescription();
             if (_friendData.GetFriends(accountId).Contains(friendName))
                 return FriendRequestResponses.AlreadyFriends.GetDescription();

@@ -1,6 +1,7 @@
 using System;
 using ante_up.Data;
 using ante_up.Hubs;
+using ante_up.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -82,6 +83,8 @@ namespace ante_up
             app.UseAuthorization();
 
             app.UseStaticFiles();
+            
+            app.UseMiddleware<ExceptionHandler>();
 
             app.UseEndpoints(endpoints =>
             {

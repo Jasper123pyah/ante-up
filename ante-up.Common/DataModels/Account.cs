@@ -8,15 +8,17 @@ namespace ante_up.Common.DataModels
     public class Account
     {
         [Key]
-        public Guid Id { get; }
-        public string Email { get;}
-        public string Username { get;}
-        public string Password { get;}
-        public int Balance { get;}
+        public Guid Id { get;set; }
+        public string Email { get;set;}
+        public string Username { get;set;}
+        public string Password { get;set;}
+        public int Balance { get;set;}
         public Team Team { get; private set; }
-        public List<ConnectionId> ConnectionIds { get;}
-        public List<FriendRequest> FriendRequests { get;}
-        public PlayerStats Stats { get;}
+        public List<ConnectionId> ConnectionIds { get;set;}
+        public List<FriendRequest> FriendRequests { get;set;}
+        public PlayerStats Stats { get;set;}
+        
+        public Account() { }
 
         public Account(string email, string username, string password)
         {
@@ -26,11 +28,6 @@ namespace ante_up.Common.DataModels
             Balance = 0;
             ConnectionIds = new List<ConnectionId>();
             FriendRequests = new List<FriendRequest>();
-        }
-
-        public string GetId()
-        {
-            return Id.ToString();
         }
 
         public IEnumerable<string> GetConnectionIds()

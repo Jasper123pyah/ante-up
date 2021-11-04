@@ -8,15 +8,11 @@ namespace ante_up.Common.DataModels
         [Key]
         public Guid Id { get; set; }
 
-        public string Connection { get;  }
-
+        public string Connection { get; set; }
+        public ConnectionId(){}
         public ConnectionId(string connectionId)
         {
             Connection = connectionId;
-        }
-        public string GetId()
-        {
-            return Id.ToString();
         }
     }
 }

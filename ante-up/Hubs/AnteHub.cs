@@ -29,9 +29,9 @@ namespace ante_up.Hubs
             _chatData = new ChatData(context);
             _friendLogic = new FriendLogic(context);
         }
-        public async Task CreateLobby(LobbyUser lobbyJoiner)
+        public async Task CreateLobby(string lobbyId)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, lobbyJoiner.Lobby);
+            await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
         }
 
         public async Task Login(string token)
@@ -46,13 +46,13 @@ namespace ante_up.Hubs
         }
         public async Task JoinLobby(LobbyUser lobbyJoiner)
         {
-            lobbyJoiner.User = _jwtLogic.GetId(lobbyJoiner.User);
+            string userId = _jwtLogic.GetId(lobbyJoiner.Token);
             await Groups.AddToGroupAsync(Context.ConnectionId,  lobbyJoiner.Lobby);
             
-            _wagerData.JoinTeam(lobbyJoiner.Lobby, lobbyJoiner.User, lobbyJoiner.Team);
+            _wagerData.JoinTeam(lobbyJoiner.Lobby, userId, lobbyJoiner.Team);
             LobbyResponse lobbyJoin = new()
             {
-                Player = _accountData.GetAccountById(lobbyJoiner.User)?.Username,
+                Player = _accountData.GetAccountById(userId)?.Username,
                 Team = lobbyJoiner.Team
             };
             
@@ -62,10 +62,11 @@ namespace ante_up.Hubs
         public async Task LeaveLobby(LobbyUser lobbyLeaver)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyLeaver.Lobby);
+
+            string userId = _jwtLogic.GetId(lobbyLeaver.Token);
+            _wagerData.LeaveWager(_wagerData.GetById(lobbyLeaver.Lobby),userId);
             
-            _wagerData.LeaveWager(_wagerData.GetById(lobbyLeaver.Lobby), lobbyLeaver.User);
-            
-            if (new WagerLogic(_anteUpContext).GetWagerById(lobbyLeaver.Lobby) == null)
+            if (_wagerData.GetById(lobbyLeaver.Lobby) == null)
             {
                 await Clients.Caller.SendAsync("LobbyGone");
             }
@@ -73,9 +74,27 @@ namespace ante_up.Hubs
             {
                 LobbyResponse lobbyLeave = new()
                 {
-                    Player = _accountData.GetAccountById(lobbyLeaver.User)?.Username
+                    Player = _accountData.GetAccountById(userId)?.Username
                 };
                 await Clients.Group(lobbyLeaver.Lobby).SendAsync("LobbyLeft", lobbyLeave);
+                await Clients.Caller.SendAsync("YouLeft");
+            }
+        }
+        public async Task KickPlayer(LobbyKick lobbyKick)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyKick.Lobby);
+            Wager wager = _wagerData.GetById(lobbyKick.Lobby);
+            
+            if(_jwtLogic.GetId(lobbyKick.HostToken) == wager.HostId)
+                 _wagerData.LeaveWager(wager, lobbyKick.User);
+            
+            else
+            {
+                LobbyResponse lobbyLeave = new()
+                {
+                    Player = _accountData.GetAccountById(lobbyKick.User)?.Username
+                };
+                await Clients.Group(lobbyKick.Lobby).SendAsync("LobbyLeft", lobbyLeave);
                 await Clients.Caller.SendAsync("YouLeft");
             }
         }
