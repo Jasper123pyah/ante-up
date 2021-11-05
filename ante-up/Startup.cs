@@ -1,18 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using ante_up.Common.Interfaces.Data;
 using ante_up.Data;
+using ante_up.Hubs;
+using ante_up.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace ante_up
@@ -21,7 +18,7 @@ namespace ante_up
     {
         readonly string MyAllowSpecificOrigins = "AllowCORS";
         
-        private readonly string ante_up = Environment.GetEnvironmentVariable("conn_string_ante_up");
+        private readonly string _anteUp = Environment.GetEnvironmentVariable("conn_string_ante_up");
         
         public Startup(IConfiguration configuration)
         {
@@ -34,21 +31,23 @@ namespace ante_up
         {
             services.AddControllers();
             
-            services.AddDbContext<AnteUpContext>(options => 
-                options.UseMySql(ante_up, 
-                    ServerVersion.AutoDetect(ante_up)));
+            services.AddDbContext<IAnteUpContext, AnteUpContext>(options => 
+                options.UseMySql(_anteUp, 
+                    ServerVersion.AutoDetect(_anteUp)));
             
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "ante_up", Version = "v1"}); });
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins("http://185.82.192.67:3000",
-                                            "localhost:3000",
-                                            "http://192.168.178.40:3000");
+                        builder.WithOrigins("localhost:3000",
+                                            "localhost:6000");
                     });
             }); 
-            
+            services.AddSignalR(e => {
+                e.MaximumReceiveMessageSize = 102400000;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +56,8 @@ namespace ante_up
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ante_up v1"));
             }
             else
             {
@@ -64,8 +65,10 @@ namespace ante_up
             }
             
             using (IServiceScope scope = app.ApplicationServices.CreateScope())
-            using (var context = scope.ServiceProvider.GetService<AnteUpContext>()) 
+            using (var context = scope.ServiceProvider.GetService<IAnteUpContext>())
+            {
                 context.Database.EnsureCreated();
+            }
             
             app.UseCors(x => x
                 .AllowAnyMethod()
@@ -82,10 +85,13 @@ namespace ante_up
             app.UseAuthorization();
 
             app.UseStaticFiles();
+            
+            app.UseMiddleware<ExceptionHandler>();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<AnteHub>("/antehub");
             });
 
             app.Run(async (context) => {

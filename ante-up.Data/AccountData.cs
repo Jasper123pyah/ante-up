@@ -2,44 +2,64 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ante_up.Common.ApiModels;
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
+using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Classes;
 using Microsoft.EntityFrameworkCore;
 
 namespace ante_up.Data
 {
-    public class AccountData
+    public class AccountData : IAccountData
     {
-        private readonly AnteUpContext anteContext;
-        public AccountData(AnteUpContext context)
+        private readonly IAnteUpContext _anteContext;
+
+        public AccountData(IAnteUpContext context)
         {
-            anteContext = context;
+            _anteContext = context;
         }
-        public void Register(ApiAccount account)
+
+        public void DeleteAccount(Account account)
         {
-            anteContext.Account.Add(new Account
-            {
-                Id = Guid.NewGuid().ToString(),
-                Balance = 0,
-                Email = account.Email,
-                Username = account.Username,
-                Password = account.Password,
-                Friends = new List<Friend>()
-            });
-            anteContext.SaveChanges();
+            _anteContext.Account.Remove(account);
+            _anteContext.SaveChanges();
         }
-        public Account GetAccountByEmail(string accountEmail)
+
+        public void RemoveConnectionId(string connectionId, Account account)
         {
-            return anteContext.Account.Include(x => x.Team).ThenInclude(x => x.Players).FirstOrDefault(e => e.Email == accountEmail);
-            
+            ConnectionId connection = account.ConnectionIds.FirstOrDefault(x => x.Connection == connectionId)!;
+            _anteContext.ConnectionId.Remove(connection);
+            _anteContext.SaveChanges();
         }
-        public Account GetAccountByUsername(string username)
+
+        public void SaveConnectionId(string connectionId, Account account)
         {
-            return anteContext.Account.Include(x => x.Team).ThenInclude(x => x.Players)
-                .FirstOrDefault(e => e.Username == username);
+            account.AddConnectionId(connectionId);
+            _anteContext.SaveChanges();
         }
-        public Account GetAccountById(string id)
+
+        public void Register(Account account)
         {
-            return anteContext.Account.Include(x => x.Team).ThenInclude(x => x.Players).FirstOrDefault(e => e.Id == id);
+            _anteContext.Account.Add(account);
+            _anteContext.SaveChanges();
+        }
+
+        public string? GetAccountIdByEmail(string accountEmail)
+        {
+            return _anteContext.Account.FirstOrDefault(e => e.Email == accountEmail)?.Id.ToString();
+        }
+
+        public string? GetAccountIdByUsername(string username)
+        {
+            return _anteContext.Account.FirstOrDefault(e => e.Username == username)?.Id.ToString();
+        }
+
+        public Account? GetAccountById(string? id)
+        {
+            return _anteContext.Account.Include(x => x.ConnectionIds)
+                .Include(x => x.FriendRequests)
+                .Include(x => x.Team)
+                .ThenInclude(x => x.Players)
+                .FirstOrDefault(a => a.Id.ToString() == id);
         }
     }
 }

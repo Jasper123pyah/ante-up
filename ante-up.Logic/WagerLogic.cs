@@ -1,22 +1,31 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ante_up.Common.ApiModels;
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
+using ante_up.Common.HubModels;
+using ante_up.Common.Interfaces.Data.Classes;
 using ante_up.Common.ViewModels;
-using ante_up.Data;
 
 namespace ante_up.Logic
 {
     public class WagerLogic
     {
-        private readonly WagerData wagerData;
-        private readonly AccountData accountData;
-        public WagerLogic(AnteUpContext context)
+        private readonly IWagerData _wagerData;
+        private readonly IAccountData _accountData;
+
+        public WagerLogic(IWagerData wagerData, IAccountData accountData)
         {
-            wagerData = new WagerData(context);
-            accountData = new AccountData(context);
+            _wagerData = wagerData;
+            _accountData = accountData;
         }
+
+        public Wager GetWagerById(string wagerId)
+        {
+            return _wagerData.GetById(wagerId);
+        }
+
         private int GetPlayerCap(string lobbySize)
         {
             return lobbySize switch
@@ -31,20 +40,25 @@ namespace ante_up.Logic
             };
         }
 
-        public ViewWager GetWagerById(string Id)
+        public ViewWager CreateViewWager(string wagerId)
         {
-            return ConvertWager(wagerData.GetById(Id));
+            Wager wager = _wagerData.GetById(wagerId);
+            wager.Chat.SortByTime();
+
+            ViewWager viewWager = ConvertWager(wager);
+            return viewWager;
         }
+
         public List<ViewWager> GetWagersInGame(string gameName)
         {
-            return wagerData.GetWagerByGame(gameName).Select(wager => ConvertWager(wager)).ToList();
+            return _wagerData.GetWagerByGame(gameName).Select(wager => ConvertWager(wager)).ToList();
         }
 
         private ViewWager ConvertWager(Wager wager)
         {
             ViewWager viewWager = new()
             {
-                Id = wager.Id,
+                Id = wager.Id.ToString(),
                 Game = wager.Game,
                 Title = wager.Title,
                 Description = wager.Description,
@@ -54,14 +68,15 @@ namespace ante_up.Logic
                 PlayerCap = wager.PlayerCap,
                 Team1 = new ViewTeam()
                 {
-                    Id = wager.Team1.Id,
+                    Id = wager.Team1.Id.ToString(),
                     Players = ConvertAccounts(wager.Team1.Players)
                 },
                 Team2 = new ViewTeam()
                 {
-                    Id = wager.Team2.Id,
+                    Id = wager.Team2.Id.ToString(),
                     Players = ConvertAccounts(wager.Team2.Players)
-                }
+                },
+                Chat = wager.Chat
             };
             return viewWager;
         }
@@ -70,36 +85,59 @@ namespace ante_up.Logic
         {
             return accounts.Select(account => new ViewAccount()
             {
-                Id = account.Id, Username = account.Username, TeamId = account.Team.Id
+                Id = account.Id.ToString(),
+                Username = account.Username,
+                TeamId = account.Team.Id.ToString()
             }).ToList();
         }
-        
+
+        public void LeaveWager(string wagerId, string accountId)
+        {
+            Account account = _accountData.GetAccountById(accountId)!;
+            Wager wager = _wagerData.GetById(wagerId);
+            
+            _wagerData.RemoveFromTeam(wager, account);
+            if (wager.HostId == account.Id.ToString())
+            {
+                if (wager.Team1.Players.FirstOrDefault()?.Id != null)
+                    _wagerData.ChangeHost(wager, wager.Team1.Players.FirstOrDefault()?.Id.ToString());  
+                else if (wager.Team2.Players.FirstOrDefault()?.Id != null)
+                    _wagerData.ChangeHost(wager, wager.Team2.Players.FirstOrDefault()?.Id.ToString());
+                else _wagerData.DeleteWager(wager);
+            }
+        }
+
+        public void JoinTeam(string accountId, string wagerId, int teamNumber)
+        {
+            Account account = _accountData.GetAccountById(accountId);
+            Wager wager = _wagerData.GetById(wagerId);
+            Wager currentWager = _wagerData.GetAccountWager(account);
+            
+            if (currentWager != null && currentWager != wager)
+                LeaveWager(currentWager.Id.ToString(), accountId);
+            
+            _wagerData.JoinTeam(wager, account, teamNumber);
+        }
         public string AddNewWager(ApiWager newWager)
         {
-            string id = Guid.NewGuid().ToString();
-            Wager wager = new()
-            {
-                Id = id,
-                Game = newWager.Game,
-                Title = newWager.Title,
-                Description = newWager.Description,
-                Ante = newWager.Ante,
-                PlayerCap = GetPlayerCap(newWager.LobbySize),
-                HostId =  newWager.CreatorId,
-                HostName = accountData.GetAccountById(newWager.CreatorId).Username,
-                Team1 = new Team() 
-                { 
-                    Id = Guid.NewGuid().ToString(),
-                    Players = new List<Account>()
-                    {
-                        accountData.GetAccountById(newWager.CreatorId)
-                    } 
-                },
-                Team2 = new Team(){Id = Guid.NewGuid().ToString(),Players = new List<Account>()}
-            };
-            wagerData.AddNewWager(wager);
-            
-            return id;
+            Account account = _accountData.GetAccountById(newWager.CreatorId);
+            Wager wager = new(
+                newWager.Game,
+                newWager.Title,
+                newWager.Description,
+                newWager.CreatorId,
+                account.Username,
+                newWager.Ante,
+                GetPlayerCap(newWager.LobbySize));
+
+            Wager currentWager = _wagerData.GetAccountWager(account);
+            if (currentWager != null)
+                LeaveWager(currentWager.Id.ToString(), account.Id.ToString());
+
+            wager.Team1.Players.Add(account);
+            account.SetTeam(wager.Team1);
+
+            return _wagerData.AddWager(wager);
         }
     }
 }

@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ante_up.Common.ApiModels;
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
+using ante_up.Common.HubModels;
+using ante_up.Common.Interfaces.Data;
 using ante_up.Common.ViewModels;
 using ante_up.Data;
 using ante_up.Logic;
+using ante_up.Logic.JWT;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,46 +19,50 @@ namespace ante_up.Controllers
     [Route("[controller]")]
     public class WagerController : ControllerBase
     {
-        private readonly AnteUpContext antecontext;
+        private readonly WagerLogic _wagerLogic;
+        private readonly ChatLogic _chatLogic;
+        private readonly JWTLogic _jwtLogic;
 
-        public WagerController(AnteUpContext context)
+        public WagerController(IAnteUpContext context)
         {
-            antecontext = context;
+            _wagerLogic = new WagerLogic(new WagerData(context), new AccountData(context));
+            _chatLogic = new ChatLogic(new WagerData(context), new AccountData(context), new ChatData(context),
+                new FriendData(context));
+            _jwtLogic = new JWTLogic();
         }
-            
-        [HttpGet]
-        public List<Wager> GetWagers()
-        {
-            return new List<Wager>();
-        }
-        
-        [HttpGet("/wager/getbygame")]
+
+        [HttpGet("/wager/game/{gameName}")]
         public List<ViewWager> GetWagerByGame(string gameName)
         {
-            return new WagerLogic(antecontext).GetWagersInGame(gameName);
+            return _wagerLogic.GetWagersInGame(gameName);
         }
 
-        [HttpGet("/wager/getbyid")]
+        [HttpGet("/wager/{id}")]
         public ViewWager GetWagerById(string id)
         {
-            ViewWager viewWager = new WagerLogic(antecontext).GetWagerById(id);
+            ViewWager viewWager = _wagerLogic.CreateViewWager(id);
             return viewWager;
         }
-        [HttpPost("/wager/create")]
+
+        [HttpPost("/wager")]
         public string NewWager(ApiWager newWager)
         {
-            return new WagerLogic(antecontext).AddNewWager(newWager);
-        } 
-        [HttpPost("/wager/jointeam")]
-        public int JoinTeam(ApiLobby apiLobby)
+            newWager.CreatorId = _jwtLogic.GetId(newWager.CreatorId);
+            return _wagerLogic.AddNewWager(newWager);
+        }
+
+        [HttpGet("/wager/chat")]
+        public Chat GetWagerChat(string id)
         {
-            return new WagerData(antecontext).JoinTeam(apiLobby.WagerId, apiLobby.PlayerId, apiLobby.TeamNumber);
+            Chat chat = _chatLogic.GetWagerChat(id);
+            chat.SortByTime();
+            return chat;
         }
 
         [HttpPost("/wager/leave")]
         public void LeaveTeam(ApiLobby apiLobby)
         {
-            new WagerData(antecontext).LeaveWager(apiLobby.WagerId, apiLobby.PlayerId);
+            _wagerLogic.LeaveWager(apiLobby.WagerId, apiLobby.PlayerId);
         }
     }
 }

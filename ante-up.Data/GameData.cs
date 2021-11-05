@@ -1,54 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ante_up.Common.Models;
-using MySql.Data.MySqlClient;
+using ante_up.Common.DataModels;
+using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Classes;
 using Microsoft.EntityFrameworkCore;
 
 namespace ante_up.Data
 {
-    public class GameData
+    public class GameData : IGameData
     {
-        private readonly AnteUpContext anteContext;
-        public GameData(AnteUpContext context)
+        private readonly IAnteUpContext _anteContext;
+        public GameData(IAnteUpContext context)
         {
-            anteContext = context;
+            _anteContext = context;
         }
         public List<Game> GetAllGames()
         {
-            AddInitialGames();
-            return anteContext.Game.ToList();
+            return _anteContext.Game.ToList();
         }
         public List<string> GetAllGameNames()
         {
-            return anteContext.Game.ToList().Select(game => game.Name).ToList();
+            return GetAllGames().Select(game => game.Name).ToList();
         }
-
-        private void AddInitialGames()
+        
+        public Game? GetGameByName(string gameName)
         {
-            if (GetGame("Fortnite") != null) return;
-            
-            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Fortnite", Image = "fortnite.jpg"});
-            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Chess", Image = "chess.jpg"});
-            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Call of Duty Modern Warfare", Image = "codmw.jpg"});
-            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "CS:GO", Image = "csgo.jpg"});
-            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Fifa 22", Image = "fifa22.jpg"});
-            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Madden NFL 22", Image = "madden.jpg"});
-            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "NBA 2K22", Image = "nba2k.jpg"});
-            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "Apex Legends", Image = "apex.jpg"});
-            anteContext.Game.Add(new Game() {Id=Guid.NewGuid().ToString(), Name = "League of Legends", Image = "leagueoflegends.jpg"});
-            anteContext.SaveChanges();
+            return _anteContext.Game.FirstOrDefault(e => e.Name == gameName);
         }
-        public Game GetGame(string gameName)
+        public void AddGame(Game game)
         {
-            return anteContext.Game.FirstOrDefault(e => e.Name == gameName);
-        }
-        public bool AddGame(Game game)
-        {
-            anteContext.Game.Add(game);
-            anteContext.SaveChanges();
-
-            return GetGame(game.Name) != null;
+            _anteContext.Game.Add(game);
+            _anteContext.SaveChanges();
         }
     }
 }

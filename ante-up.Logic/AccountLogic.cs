@@ -1,47 +1,94 @@
-using System;
-using System.Linq;
-using System.Security.Claims;
-using ante_up.Common;
 using ante_up.Common.ApiModels;
-using ante_up.Common.Models;
-using ante_up.Data;
+using ante_up.Common.DataModels;
+using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Classes;
+using ante_up.Logic.JWT;
 
 namespace ante_up.Logic
 {
     public class AccountLogic
     {
-        private readonly AccountData accountData;
-        
-        public AccountLogic(AnteUpContext context = null)
+        private readonly IAccountData _accountData;
+
+        public AccountLogic(IAccountData accountData)
         {
-             accountData = new AccountData(context);
+            _accountData = accountData;
         }
 
-        public ApiLogin LoginCheck(Account account, string password)
+        public Account GetAccountById(string accountId)
         {
-            ApiLogin login = new(){Username = ""};
-            if (account == null)
-                 login.Response = "1";
-            else if (!BCrypt.Net.BCrypt.Verify(password,account.Password))
-                login.Response = "2";
-            else
-            {
-                login.Response = account.Id;
-                login.Username = account.Username;
-            }
-                 
-            return login ;
+            return _accountData.GetAccountById(accountId);
         }
-        public string Register(ApiAccount account)
+
+        public Account GetAccountByUserName(string userName)
         {
-            if (accountData.GetAccountByEmail(account.Email) != null)
-                return "Email is already taken.";
-            if (accountData.GetAccountByUsername(account.Username) != null)
-                return "Username is already taken.";
+            return GetAccountById(_accountData.GetAccountIdByUsername(userName));
+        }
+
+        private Account GetAccountByEmail(string email)
+        {
+            return GetAccountById(_accountData.GetAccountIdByEmail(email));
+        }
+        public void SaveConnectionId(string accountId, string connectionId)
+        {
+            Account account = GetAccountById(accountId);
+            _accountData.SaveConnectionId(connectionId, account);   
+        }
+
+        public void RemoveConnectionId(string accountId, string connectionId)
+        {
+            Account account = GetAccountById(accountId);
+            _accountData.RemoveConnectionId(connectionId, account);
+        }
+        public ApiAccountInfo GetAccountInfo(string accountId)
+        {
+            Account account = GetAccountById(accountId);
+            if (account == null)
+                return null;
+
+            ApiAccountInfo accountInfo = new()
+            {
+                Id = account.Id.ToString(),
+                Username = account.Username,
+                Balance = account.Balance,
+                Email = account.Email
+            };
+
+            return accountInfo;
+        }
+
+        public ApiLogin LoginCheck(string accountEmail, string password)
+        {
+            Account account = GetAccountByEmail(accountEmail);
+
+            if (account == null)
+                throw new ApiException(404, "There is no account with this email.");
+            if (!BCrypt.Net.BCrypt.Verify(password, account.Password))
+                throw new ApiException(401, "Incorrect password.");
+
+            ApiLogin login = new()
+            {
+                Username = account.Username, Token = new JWTLogic().GetToken(account.Username, account.Id.ToString())
+            };
+
+            return login;
+        }
+
+        public void Register(ApiAccount account)
+        {
+            if (_accountData.GetAccountIdByEmail(account.Email) != null)
+                throw new ApiException(409, "Email is already taken.");
+            if (_accountData.GetAccountIdByUsername(account.Username) != null)
+                throw new ApiException(409, "Username is already taken.");
 
             account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
-            accountData.Register(account);
-            return "";
+            _accountData.Register(new Account(account.Email, account.Username, account.Password));
+        }
+
+        public void RemoveAccount(string accountId)
+        {
+            Account account = GetAccountById(accountId);
+            _accountData.DeleteAccount(account);
         }
     }
 }

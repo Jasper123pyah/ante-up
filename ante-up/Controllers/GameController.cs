@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ante_up.Common.ApiModels;
-using ante_up.Common.Models;
+using ante_up.Common.DataModels;
+using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Classes;
 using ante_up.Data;
+using ante_up.Logic;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ante_up.Controllers
 {
@@ -18,30 +20,23 @@ namespace ante_up.Controllers
         [Route("[controller]")]
         public class GameController : ControllerBase
         {
-            private readonly AnteUpContext antecontext;
+            private readonly GameLogic _gameLogic;
 
-            public GameController(AnteUpContext context)
+            public GameController(IAnteUpContext context)
             {
-                antecontext = context;
+                _gameLogic = new GameLogic(new GameData(context));
             }
-            
+
             [HttpGet]
             public List<Game> GetGames()
             {
-                GameData gameData = new(antecontext);
-                return gameData.GetAllGames();
+                return _gameLogic.GetAllGames();
             }
 
-            [HttpGet("/game/gamenames")]
+            [HttpGet("/game/names")]
             public List<string> GetGameNames()
             {
-                return new GameData(antecontext).GetAllGameNames();
-            }
-            [HttpPost("/add")]
-            public Game NewGame(ApiGame newGame)
-            {
-                
-                return null;
+                return _gameLogic.GetAllGameNames();
             }
         }
     }

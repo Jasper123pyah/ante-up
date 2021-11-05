@@ -1,24 +1,51 @@
-using ante_up.Common.Models;
-using ante_up.Logic;
+using System.Linq;
+using ante_up.Common.DataModels;
 using NUnit.Framework;
 
 namespace ante_up.Tests
 {
-    public class Tests
+    public class AccountTests
     {
         [Test]
-        public void TestIfLoginPasses()
+        public void AddConnectionId_Added()
         {
-            Account account = new Account()
-            {
-                Id = "123abc",
-                Username = "User",
-                Email = "email@gmail.com",
-                Password = BCrypt.Net.BCrypt.HashPassword("verysecretpassword")
-            };
-            string response = new AccountLogic().LoginCheck(account, "verysecretpassword").Response;
+            Account account = new("email", "username", "password");
+            account.AddConnectionId("connection123");
 
-            bool result = response == "123abc";
+            bool result =  account.ConnectionIds.Any(x => x.Connection == "connection123");
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void GetConnectionIds_Found()
+        {
+            Account account = new("email", "username", "password");
+            account.AddConnectionId("connection123");
+
+            bool result = account.GetConnectionIds().Count() == 1;
+            
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void SetTeam_TeamIsNotNull()
+        {
+            Account account = new("email", "username", "password");
+            account.SetTeam(new Team());
+
+            bool result = account.Team != null;
+            
+            Assert.IsTrue(result);
+        }
+        [Test]
+        public void RemoveTeam_TeamIsNull()
+        {
+            Account account = new("email", "username", "password");
+            account.SetTeam(new Team());
+            account.RemoveTeam();
+            
+            bool result = account.Team == null;
             
             Assert.IsTrue(result);
         }
