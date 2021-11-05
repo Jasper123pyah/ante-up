@@ -1,9 +1,10 @@
 using ante_up.Common.DataModels;
+using ante_up.Common.Interfaces.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace ante_up.Data
 {
-    public class AnteUpContext : DbContext
+    public class AnteUpContext : DbContext, IAnteUpContext
     {
         public DbSet<Account> Account { get; set; }
         public DbSet<Game> Game { get; set; }

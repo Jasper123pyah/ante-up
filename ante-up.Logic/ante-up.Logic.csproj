@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ante-up.Data\ante-up.Data.csproj" />
+      <ProjectReference Include="..\ante-up.Common\ante-up.Common.csproj" />
     </ItemGroup>
 
 </Project>

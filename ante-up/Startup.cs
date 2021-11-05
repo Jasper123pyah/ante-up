@@ -1,4 +1,5 @@
 using System;
+using ante_up.Common.Interfaces.Data;
 using ante_up.Data;
 using ante_up.Hubs;
 using ante_up.Middleware;
@@ -30,9 +31,10 @@ namespace ante_up
         {
             services.AddControllers();
             
-            services.AddDbContext<AnteUpContext>(options => 
+            services.AddDbContext<IAnteUpContext, AnteUpContext>(options => 
                 options.UseMySql(_anteUp, 
                     ServerVersion.AutoDetect(_anteUp)));
+            
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "ante_up", Version = "v1"}); });
             services.AddCors(options =>
             {
@@ -63,7 +65,7 @@ namespace ante_up
             }
             
             using (IServiceScope scope = app.ApplicationServices.CreateScope())
-            using (var context = scope.ServiceProvider.GetService<AnteUpContext>())
+            using (var context = scope.ServiceProvider.GetService<IAnteUpContext>())
             {
                 context.Database.EnsureCreated();
             }

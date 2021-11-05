@@ -3,47 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using ante_up.Common.HubModels;
 using ante_up.Common.DataModels;
+using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Classes;
 
 namespace ante_up.Data
 {
-    public class ChatData
+    public class ChatData : IChatData
     {
-        private readonly AnteUpContext _anteContext;
-        private readonly AccountData _accountData;
-        private readonly FriendData _friendData;
-        private readonly WagerData _wagerData;
-        public ChatData(AnteUpContext context)
+        private readonly IAnteUpContext _anteContext;
+
+        public ChatData(IAnteUpContext context)
         {
             _anteContext = context;
-            _accountData = new AccountData(context);
-            _friendData = new FriendData(context);
-            _wagerData = new WagerData(context);
         }
 
-        public void SendLobbyMessage(LobbyMessage lobbyMessage)
+        public void SendWagerMessage(Wager wager, Message message)
         {
-            Wager wager = _wagerData.GetById(lobbyMessage.LobbyId);
-            Message message = new(_accountData.GetAccountById(lobbyMessage.Sender)?.Username, lobbyMessage.Message);
             wager.Chat.AddMessage(message);
             _anteContext.SaveChanges();
         }
-        public Chat GetFriendChat(string friendId, string accountId)
+        
+        public void SendFriendMessage(Chat chat, Message message)
         {
-            return _friendData.GetFriendShip(accountId, friendId).Chat;
-        }
-        public void SendFriendMessage(string receiver, string senderId, string message)
-        {
-            string? receiverId = _accountData.GetAccountIdByUsername(receiver);
-            string? senderName = _accountData.GetAccountById(senderId)?.Username;
-            
-            Chat chat = GetFriendChat(receiverId!, senderId);
-            chat.AddMessage(new Message(senderName, message));
+            chat.AddMessage(message);
             _anteContext.SaveChanges();
         }
 
-        public Chat? GetWagerChat(string lobbyId)
+        public Chat GetWagerChat(Wager wager)
         {
-            Wager wager = _wagerData.GetById(lobbyId);
             return wager.Chat;
         }
     }

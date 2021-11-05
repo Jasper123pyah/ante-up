@@ -1,26 +1,11 @@
 using System.Linq;
-using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
-using ante_up.Data;
-using ante_up.Logic;
 using NUnit.Framework;
-using Moq;
 
 namespace ante_up.Tests
 {
     public class AccountTests
     {
-        [Test]
-        public void LoginCheck_Accepted()
-        {
-            Account account = new("email@gmail.com", "User", BCrypt.Net.BCrypt.HashPassword("verysecretpassword"));
-            
-            string response = new AccountLogic().LoginCheck(account, "verysecretpassword").Username ;
-
-            bool result = response == "User";
-            
-            Assert.IsTrue(result);
-        }
         [Test]
         public void AddConnectionId_Added()
         {
@@ -44,7 +29,7 @@ namespace ante_up.Tests
         }
 
         [Test]
-        public void SetTeam_Teamisnotnull()
+        public void SetTeam_TeamIsNotNull()
         {
             Account account = new("email", "username", "password");
             account.SetTeam(new Team());
@@ -54,7 +39,7 @@ namespace ante_up.Tests
             Assert.IsTrue(result);
         }
         [Test]
-        public void RemoveTeam_Teamisnull()
+        public void RemoveTeam_TeamIsNull()
         {
             Account account = new("email", "username", "password");
             account.SetTeam(new Team());
@@ -63,8 +48,6 @@ namespace ante_up.Tests
             bool result = account.Team == null;
             
             Assert.IsTrue(result);
-            
         }
-        
     }
 }

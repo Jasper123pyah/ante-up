@@ -16,7 +16,6 @@ namespace ante_up.Common.DataModels
         {
             Messages = new List<Message>();
         }
-
         public void AddMessage(Message message)
         {
             Messages.Add(message);

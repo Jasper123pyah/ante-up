@@ -1,62 +1,94 @@
 using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
-using ante_up.Data;
+using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Classes;
 using ante_up.Logic.JWT;
 
 namespace ante_up.Logic
 {
     public class AccountLogic
     {
-        private readonly AccountData accountData;
-        private readonly AnteUpContext _anteUpContext;
-        public AccountLogic(AnteUpContext context = null)
+        private readonly IAccountData _accountData;
+
+        public AccountLogic(IAccountData accountData)
         {
-             accountData = new AccountData(context!);
-             _anteUpContext = context;
+            _accountData = accountData;
         }
 
-        public ApiAccountInfo GetAccountInfo(string id)
+        public Account GetAccountById(string accountId)
         {
-            Account acc = accountData.GetAccountById(id);
-            if (acc == null)
+            return _accountData.GetAccountById(accountId);
+        }
+
+        public Account GetAccountByUserName(string userName)
+        {
+            return GetAccountById(_accountData.GetAccountIdByUsername(userName));
+        }
+
+        private Account GetAccountByEmail(string email)
+        {
+            return GetAccountById(_accountData.GetAccountIdByEmail(email));
+        }
+        public void SaveConnectionId(string accountId, string connectionId)
+        {
+            Account account = GetAccountById(accountId);
+            _accountData.SaveConnectionId(connectionId, account);   
+        }
+
+        public void RemoveConnectionId(string accountId, string connectionId)
+        {
+            Account account = GetAccountById(accountId);
+            _accountData.RemoveConnectionId(connectionId, account);
+        }
+        public ApiAccountInfo GetAccountInfo(string accountId)
+        {
+            Account account = GetAccountById(accountId);
+            if (account == null)
                 return null;
-            
+
             ApiAccountInfo accountInfo = new()
             {
-                Id = id,
-                Username = acc.Username,
-                Balance = acc.Balance,
-                Email = acc.Email
+                Id = account.Id.ToString(),
+                Username = account.Username,
+                Balance = account.Balance,
+                Email = account.Email
             };
 
             return accountInfo;
         }
 
-        public ApiLogin LoginCheck(Account account, string password)
+        public ApiLogin LoginCheck(string accountEmail, string password)
         {
-            ApiLogin login = new(){Username = ""};
+            Account account = GetAccountByEmail(accountEmail);
+
             if (account == null)
-                throw new ApiException(404, "Account not found.");
+                throw new ApiException(404, "There is no account with this email.");
             if (!BCrypt.Net.BCrypt.Verify(password, account.Password))
-                throw new ApiException(401, "Wrong password.");
-            else
+                throw new ApiException(401, "Incorrect password.");
+
+            ApiLogin login = new()
             {
-                login.Token = new JWTLogic().GetToken(account.Username, account.Id.ToString());
-                login.Username = account.Username;
-            }
-                 
-            return login ;
+                Username = account.Username, Token = new JWTLogic().GetToken(account.Username, account.Id.ToString())
+            };
+
+            return login;
         }
+
         public void Register(ApiAccount account)
         {
-            if (accountData.GetAccountIdByEmail(account.Email) != null)
+            if (_accountData.GetAccountIdByEmail(account.Email) != null)
                 throw new ApiException(409, "Email is already taken.");
-            if (accountData.GetAccountIdByUsername(account.Username) != null)
-                throw new ApiException(409, "Username is already taken.") ; ;
+            if (_accountData.GetAccountIdByUsername(account.Username) != null)
+                throw new ApiException(409, "Username is already taken.");
 
             account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
-            if(_anteUpContext != null)
-                accountData.Register(account);
+            _accountData.Register(new Account(account.Email, account.Username, account.Password));
+        }
+
+        public void RemoveAccount(string accountId)
+        {
+            Account account = GetAccountById(accountId);
+            _accountData.DeleteAccount(account);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
 using ante_up.Common.HubModels;
+using ante_up.Common.Interfaces.Data;
 using ante_up.Common.ViewModels;
 using ante_up.Data;
 using ante_up.Logic;
@@ -18,16 +19,16 @@ namespace ante_up.Controllers
     [Route("[controller]")]
     public class WagerController : ControllerBase
     {
-        private readonly AnteUpContext _anteUpContext;
         private readonly WagerLogic _wagerLogic;
-        private readonly WagerData _wagerData;
+        private readonly ChatLogic _chatLogic;
         private readonly JWTLogic _jwtLogic;
-        public WagerController(AnteUpContext context)
+
+        public WagerController(IAnteUpContext context)
         {
-            _anteUpContext = context;
-            _wagerLogic = new WagerLogic(context);
+            _wagerLogic = new WagerLogic(new WagerData(context), new AccountData(context));
+            _chatLogic = new ChatLogic(new WagerData(context), new AccountData(context), new ChatData(context),
+                new FriendData(context));
             _jwtLogic = new JWTLogic();
-            _wagerData = new WagerData(context);
         }
 
         [HttpGet("/wager/game/{gameName}")]
@@ -39,8 +40,7 @@ namespace ante_up.Controllers
         [HttpGet("/wager/{id}")]
         public ViewWager GetWagerById(string id)
         {
-            Wager wager = _wagerData.GetById(id);
-            ViewWager viewWager =_wagerLogic.CreateViewWager(wager);
+            ViewWager viewWager = _wagerLogic.CreateViewWager(id);
             return viewWager;
         }
 
@@ -54,7 +54,7 @@ namespace ante_up.Controllers
         [HttpGet("/wager/chat")]
         public Chat GetWagerChat(string id)
         {
-            Chat chat = new ChatData(_anteUpContext).GetWagerChat(id);
+            Chat chat = _chatLogic.GetWagerChat(id);
             chat.SortByTime();
             return chat;
         }
@@ -62,7 +62,7 @@ namespace ante_up.Controllers
         [HttpPost("/wager/leave")]
         public void LeaveTeam(ApiLobby apiLobby)
         {
-            _wagerLogic.LeaveWager(apiLobby);
+            _wagerLogic.LeaveWager(apiLobby.WagerId, apiLobby.PlayerId);
         }
     }
 }

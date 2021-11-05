@@ -3,44 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
+using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Classes;
 using Microsoft.EntityFrameworkCore;
 
 namespace ante_up.Data
 {
-    public class AccountData
+    public class AccountData : IAccountData
     {
-        private readonly AnteUpContext _anteContext;
+        private readonly IAnteUpContext _anteContext;
 
-        public AccountData(AnteUpContext context)
+        public AccountData(IAnteUpContext context)
         {
             _anteContext = context;
         }
 
-        public void DeleteAccount(string accountId)
+        public void DeleteAccount(Account account)
         {
-            Account ?account = GetAccountById(accountId);
-            if (account != null) 
-                _anteContext.Account.Remove(account);
+            _anteContext.Account.Remove(account);
+            _anteContext.SaveChanges();
         }
-        
-        public void RemoveConnectionId(string connectionId, string accountId)
+
+        public void RemoveConnectionId(string connectionId, Account account)
         {
-            Account? account = GetAccountById(accountId);
-            ConnectionId connection = account.ConnectionIds.FirstOrDefault(x => x.Connection == connectionId);
+            ConnectionId connection = account.ConnectionIds.FirstOrDefault(x => x.Connection == connectionId)!;
             _anteContext.ConnectionId.Remove(connection);
             _anteContext.SaveChanges();
         }
 
-        public void SaveConnectionId(string connectionId, string accountId)
+        public void SaveConnectionId(string connectionId, Account account)
         {
-            Account? account = GetAccountById(accountId);
-            account?.AddConnectionId(connectionId);
+            account.AddConnectionId(connectionId);
             _anteContext.SaveChanges();
         }
 
-        public void Register(ApiAccount account)
+        public void Register(Account account)
         {
-            _anteContext.Account.Add(new Account(account.Email, account.Username, account.Password));
+            _anteContext.Account.Add(account);
             _anteContext.SaveChanges();
         }
 

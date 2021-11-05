@@ -2,66 +2,50 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ante_up.Common.DataModels;
+using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Classes;
 using Microsoft.EntityFrameworkCore;
 
 namespace ante_up.Data
 {
-    public class WagerData
+    public class WagerData : IWagerData
     {
-        private readonly AnteUpContext _anteContext;
-        private readonly AccountData _accountData;
-        public WagerData(AnteUpContext context)
+        private readonly IAnteUpContext _anteContext;
+        public WagerData(IAnteUpContext context)
         {
             _anteContext = context;
-            _accountData = new AccountData(context);
         }
         
-        public string AddNewWager(Wager newWager)
+        public string AddWager(Wager wager)
         {
-            _anteContext.Wager.Add(newWager);
+            _anteContext.Wager.Add(wager);
             _anteContext.SaveChanges();
-
-            return GetByHostId(newWager.HostId).Id.ToString();
+            return GetByHostId(wager.HostId).Id.ToString();
         }
         
-        public void LeaveWager(Wager wager, string accountId)
+        public void ChangeHost(Wager wager, string hostId)
         {
-            Account account = _accountData.GetAccountById(accountId)!;
-            
-            RemoveFromTeam(wager, account);
-            if (wager.HostId == account.Id.ToString())
-            {
-                if(wager.Team1.Players.FirstOrDefault()?.Id != null)
-                    wager.HostId = wager.Team1.Players.FirstOrDefault()?.Id.ToString();
-                else if (wager.Team2.Players.FirstOrDefault()?.Id != null)
-                    wager.HostId = wager.Team2.Players.FirstOrDefault()?.Id.ToString();
-                else DeleteWager(wager);
-            }
+            wager.HostId = hostId;
             _anteContext.SaveChanges();
         }
-        public void JoinTeam(string wagerId, string accountId, int teamNumber)
+        
+        public void JoinTeam(Wager wager, Account account, int teamNumber)
         {
-            Account account = _accountData.GetAccountById(accountId);
-            Wager wager = GetById(wagerId);
-            Wager currentWager = GetAccountWager(accountId);
-            
-            if (currentWager != null && currentWager != wager)
-                LeaveWager(currentWager, accountId);
-
-            if (teamNumber == 1)
+            switch (teamNumber)
             {
-                wager.Team1.Players.Add(account);
-                account.SetTeam(wager.Team1);
-                _anteContext.SaveChanges();
-            } 
-            if (teamNumber == 2)
-            {
-                wager.Team2.Players.Add(account);
-                account.SetTeam(wager.Team2);
-                _anteContext.SaveChanges();
+                case 1:
+                    wager.Team1.Players.Add(account);
+                    account.SetTeam(wager.Team1);
+                    break;
+                case 2:
+                    wager.Team2.Players.Add(account);
+                    account.SetTeam(wager.Team2);
+                    break;
             }
+
+            _anteContext.SaveChanges();
         }
-        private void DeleteWager(Wager wager)
+        public void DeleteWager(Wager wager)
         {
             _anteContext.Team.RemoveRange(wager.Team1);
             _anteContext.Team.RemoveRange(wager.Team2);
@@ -70,7 +54,7 @@ namespace ante_up.Data
             
             _anteContext.SaveChanges();
         }
-        public Wager GetById(string id)
+        public Wager? GetById(string id)
         {
             return _anteContext.Wager.Include(team1 => team1.Team1)
                 .ThenInclude(x => x.Players)
@@ -91,9 +75,8 @@ namespace ante_up.Data
                 .FirstOrDefault(wager => wager.HostId == hostId)!;
         }
 
-        public Wager? GetAccountWager(string accountId)
+        public Wager? GetAccountWager(Account account)
         {
-            Account account = _accountData.GetAccountById(accountId)!;
             if (account.Team == null)
                 return null;
             if (_anteContext.Wager.FirstOrDefault(e => e.Team1.Players.Contains(account)) != null)
@@ -119,7 +102,7 @@ namespace ante_up.Data
             _anteContext.SaveChanges();
         }
         
-        public List<Wager> GetWagerByGame(string gameName)
+        public IEnumerable<Wager> GetWagerByGame(string gameName)
         {
             return _anteContext.Wager.Where(wager => wager.Game == gameName)
                                     .Include(team1 => team1.Team1)

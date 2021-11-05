@@ -2,38 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ante_up.Common.DataModels;
+using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Classes;
 using Microsoft.EntityFrameworkCore;
 
 namespace ante_up.Data
 {
-    public class FriendData
+    public class FriendData : IFriendData
     {
-        private readonly AnteUpContext _anteContext;
+        private readonly IAnteUpContext _anteContext;
         private readonly AccountData _accountData;
 
-        public FriendData(AnteUpContext context)
+        public FriendData(IAnteUpContext context)
         {
             _anteContext = context;
             _accountData = new AccountData(context);
         }
 
-        public List<string> GetFriends(string accountId) // returns list of usernames of friends of account
+        public List<Friendship> GetFriends(string accountId) // returns list of usernames of friends of account
         {
-            List<string?> userNames = new();
-            List<Friendship> friendships = _anteContext.Friendship.Where(x => x.AccountId1 == accountId
-                                                                              || x.AccountId2 == accountId).ToList();
-            foreach (Friendship friendship in friendships)
-            {
-                if (friendship.AccountId1 == accountId)
-                    userNames.Add(_accountData.GetAccountById(friendship.AccountId2)?.Username);
-                else
-                    userNames.Add(_accountData.GetAccountById(friendship.AccountId1)?.Username);
-            }
-
-            return userNames;
+            return _anteContext.Friendship.Where(x => x.AccountId1 == accountId
+                                                            || x.AccountId2 == accountId).ToList();
         }
 
-        public List<string>? GetFriendRequests(string accountId)
+        public List<string>? GetFriendRequestNames(string accountId)
         {
             return _accountData.GetAccountById(accountId)?.FriendRequests.Select(x => x.RequesterName).ToList();
         }
@@ -52,10 +44,9 @@ namespace ante_up.Data
             account.FriendRequests.Add(new FriendRequest(requesterId, requesterName));
             _anteContext.SaveChanges();
         }
-        public void CreateFriendShip(Account account1, Account account2)
+        public void CreateFriendship(Friendship friendship)
         {
-            Friendship friendShip = new(account1.Id.ToString(), account2.Id.ToString());
-            _anteContext.Friendship.Add(friendShip);
+            _anteContext.Friendship.Add(friendship);
             _anteContext.SaveChanges();
         }
 
@@ -70,6 +61,5 @@ namespace ante_up.Data
 
             _anteContext.SaveChanges();
         }
-        
     }
 }
