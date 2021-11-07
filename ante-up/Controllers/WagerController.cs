@@ -30,9 +30,9 @@ namespace ante_up.Controllers
         }
 
         [HttpGet("/wager/game/{gameName}")]
-        public List<ViewWager> GetWagerByGame(string gameName)
+        public IActionResult GetWagerByGame(string gameName)
         {
-            return _wagerLogic.GetWagersInGame(gameName);
+            return StatusCode(200, _wagerLogic.GetWagersInGame(gameName));
         }
 
         [HttpGet("/wager/{id}")]
@@ -43,22 +43,24 @@ namespace ante_up.Controllers
         }
 
         [HttpPost("/wager")]
-        public string NewWager(ApiWager newWager)
+        public IActionResult NewWager(ApiWager newWager)
         {
-            string creatorId = JWTLogic.GetId(Request.Headers["Authorization"]);
-            return _wagerLogic.AddNewWager(newWager, creatorId);
+            return StatusCode(200, _wagerLogic.AddNewWager(newWager, JWTLogic.GetId(Request.Headers["Authorization"])));
         }
 
         [HttpGet("/wager/chat")]
-        public Chat GetWagerChat(string id)
+        public IActionResult GetWagerChat(string id)
         {
-            return _chatLogic.GetWagerChat(id);;
+            return StatusCode(200, _chatLogic.GetWagerChat(id));
         }
 
         [HttpPost("/wager/leave")]
-        public void LeaveTeam(ApiLobby apiLobby)
+        public IActionResult LeaveTeam(ApiLobby apiLobby)
         {
-            _wagerLogic.LeaveWager(apiLobby.WagerId, JWTLogic.GetId(Request.Headers["Authorization"]));
+            string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
+            if (accountId == null)
+                throw new ApiException(401, "Token is invalid.");
+            return StatusCode(200, _wagerLogic.LeaveWager(apiLobby.WagerId, accountId));
         }
     }
 }

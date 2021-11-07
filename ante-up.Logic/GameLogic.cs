@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ante_up.Common.ApiModels;
 using ante_up.Common.ApiModels.Admin;
@@ -52,11 +53,17 @@ namespace ante_up.Logic
         public List<Game> GetAllGames()
         {
             Initialize();
-            return _gameData.GetAllGames();
+            List<Game> games = _gameData.GetAllGames();
+            if (games.Count == 0)
+                throw new ApiException(404, "Games not found");
+            return games;
         }
         public List<string> GetAllGameNames()
         {
-            return _gameData.GetAllGameNames();
+            List<string> gameNames = _gameData.GetAllGameNames();
+            if (gameNames.Count == 0)
+                throw new ApiException(404, "Games not found");
+            return gameNames;
         }
     }
 }

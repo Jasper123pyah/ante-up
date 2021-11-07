@@ -49,6 +49,8 @@ namespace ante_up.Logic
         public Chat GetWagerChat(string wagerId)
         {
             Wager wager = _wagerData.GetById(wagerId);
+            if (wager == null)
+                throw new ApiException(404, "Wager not found.");
             Chat chat = _chatData.GetWagerChat(wager);
             chat.SortByTime();
             return chat;

@@ -28,15 +28,15 @@ namespace ante_up.Controllers
             }
 
             [HttpGet]
-            public List<Game> GetGames()
+            public IActionResult GetGames()
             {
-                return _gameLogic.GetAllGames();
+                return StatusCode(200, _gameLogic.GetAllGames());
             }
 
             [HttpGet("/game/names")]
-            public List<string> GetGameNames()
+            public IActionResult GetGameNames()
             {
-                return _gameLogic.GetAllGameNames();
+                return StatusCode(200,_gameLogic.GetAllGameNames());
             }
         }
     }

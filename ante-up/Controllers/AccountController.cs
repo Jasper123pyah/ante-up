@@ -47,10 +47,9 @@ namespace ante_up.Controllers
         }
         
         [HttpGet("/account/friends")]
-        public List<string> GetFriends()
+        public IActionResult GetFriends()
         {
-            string id = JWTLogic.GetId(Request.Headers["Authorization"]);
-            return _friendLogic.GetFriendNames(id);
+            return StatusCode(200, _friendLogic.GetFriendNames(JWTLogic.GetId(Request.Headers["Authorization"])));
         }
         
 
@@ -64,29 +63,29 @@ namespace ante_up.Controllers
         }
 
         [HttpGet("/account/friendrequests")]
-        public List<string> GetFriendRequests()
+        public IActionResult GetFriendRequests()
         {
-            string id = JWTLogic.GetId(Request.Headers["Authorization"]);
-            return _friendLogic.GetFriendRequestNames(id);
+            return StatusCode(200, _friendLogic.GetFriendRequestNames(JWTLogic.GetId(Request.Headers["Authorization"])));
         }
 
         [HttpGet("/account/info")]
-        public ApiAccountInfo GetAccountInfo()
+        public IActionResult GetAccountInfo()
         {
-            if (Request.Headers["Authorization"].ToString() == null)
-                return new ApiAccountInfo();
-
             string id = JWTLogic.GetId(Request.Headers["Authorization"]);
+            
+            if (id == null)
+                throw new ApiException(401, "Invalid Token.");
+
             ApiAccountInfo accountInfo = _accountLogic.GetAccountInfo(id);
-            return accountInfo;
+            return StatusCode(200, accountInfo);
         }
 
         [HttpPost("/account/friendrequest")]
-        public void RespondToFriendRequest(ApiFriendRequestResponse response)
+        public IActionResult RespondToFriendRequest(ApiFriendRequestResponse response)
         {
-            string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
-            _friendLogic.FriendRequestResponse(accountId, response.Accepted, response.FriendName);
+            _friendLogic.FriendRequestResponse(JWTLogic.GetId(Request.Headers["Authorization"]), response.Accepted,
+                response.FriendName);
+            return StatusCode(200);
         }
-
     }
 }

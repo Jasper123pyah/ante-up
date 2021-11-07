@@ -45,7 +45,7 @@ namespace ante_up.Logic
         {
             Account account = GetAccountById(accountId);
             if (account == null)
-                return null;
+                throw new ApiException(404, "Account not found.");
 
             ApiAccountInfo accountInfo = new()
             {

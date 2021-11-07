@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
 using ante_up.Common.Interfaces.Data;
 using ante_up.Common.Interfaces.Data.Classes;
+using ante_up.Logic.JWT;
 
 namespace ante_up.Logic
 {
@@ -15,13 +17,17 @@ namespace ante_up.Logic
             _friendData = friendData;
         }
 
-        public void CreateFriendship(Account account1, Account account2)
+        private void CreateFriendship(Account account1, Account account2)
         {
             Friendship friendShip = new(account1.Id.ToString(), account2.Id.ToString());
             _friendData.CreateFriendship(friendShip);
         }
-        public List<string> GetFriendNames(string accountId)
+        public List<string> GetFriendNames(string token)
         {
+            string accountId = JWTLogic.GetId(token);
+            if (accountId == null)
+                throw new ApiException(401, "Invalid Token.");
+            
             List<string> userNames = new();
             List<Friendship> friendships = _friendData.GetFriends(accountId);
             
@@ -36,8 +42,12 @@ namespace ante_up.Logic
             return userNames;
         }
 
-        public List<string> GetFriendRequestNames(string accountId)
+        public List<string> GetFriendRequestNames(string token)
         {
+            string accountId = JWTLogic.GetId(token);
+            if (accountId == null)
+                throw new ApiException(401, "Invalid Token.");
+            
             return _friendData.GetFriendRequestNames(accountId);
         }
         public string FriendRequest(string friendName, string accountId)
@@ -56,10 +66,14 @@ namespace ante_up.Logic
             _friendData.CreateFriendRequest(friend, accountId, account?.Username!);
             return FriendRequestResponses.Success.GetDescription();
         }
-        public void FriendRequestResponse(string accountId, bool accepted, string friendName)
+        public void FriendRequestResponse(string token, bool accepted, string friendName)
         {
-            Account account = _accountData.GetAccountById(accountId)!;
-            Account friend = _accountData.GetAccountById(_accountData.GetAccountIdByUsername(friendName))!;
+            string accountId = JWTLogic.GetId(token);
+            if (accountId == null)
+                throw new ApiException(401, "Invalid Token.");
+            
+            Account account = _accountData.GetAccountById(accountId);
+            Account friend = _accountData.GetAccountById(_accountData.GetAccountIdByUsername(friendName));
             if (accepted)
                 CreateFriendship(account, friend);   
             
