@@ -43,10 +43,17 @@ namespace ante_up.Logic
         public ViewWager CreateViewWager(string wagerId)
         {
             Wager wager = _wagerData.GetById(wagerId);
-            wager.Chat.SortByTime();
+            if (wager != null)
+            {
+                wager.Chat.SortByTime();
 
-            ViewWager viewWager = ConvertWager(wager);
-            return viewWager;
+                ViewWager viewWager = ConvertWager(wager);
+                return viewWager;
+            }
+            else
+            {
+                throw new ApiException(404, "Wager not found.");
+            }
         }
 
         public List<ViewWager> GetWagersInGame(string gameName)
@@ -91,7 +98,7 @@ namespace ante_up.Logic
             }).ToList();
         }
 
-        public void LeaveWager(string wagerId, string accountId)
+        public int LeaveWager(string wagerId, string accountId)
         {
             Account account = _accountData.GetAccountById(accountId)!;
             Wager wager = _wagerData.GetById(wagerId);
@@ -100,11 +107,17 @@ namespace ante_up.Logic
             if (wager.HostId == account.Id.ToString())
             {
                 if (wager.Team1.Players.FirstOrDefault()?.Id != null)
-                    _wagerData.ChangeHost(wager, wager.Team1.Players.FirstOrDefault()?.Id.ToString());  
+                    _wagerData.ChangeHost(wager, wager.Team1.Players.FirstOrDefault()?.Id.ToString());
                 else if (wager.Team2.Players.FirstOrDefault()?.Id != null)
                     _wagerData.ChangeHost(wager, wager.Team2.Players.FirstOrDefault()?.Id.ToString());
-                else _wagerData.DeleteWager(wager);
+                else
+                {
+                    _wagerData.DeleteWager(wager);
+                    return 0;
+                }
             }
+
+            return wager.Team1.Players.Count + wager.Team2.Players.Count;
         }
 
         public void JoinTeam(string accountId, string wagerId, int teamNumber)
@@ -118,14 +131,14 @@ namespace ante_up.Logic
             
             _wagerData.JoinTeam(wager, account, teamNumber);
         }
-        public string AddNewWager(ApiWager newWager)
+        public string AddNewWager(ApiWager newWager, string creatorId)
         {
-            Account account = _accountData.GetAccountById(newWager.CreatorId);
+            Account account = _accountData.GetAccountById(creatorId);
             Wager wager = new(
                 newWager.Game,
                 newWager.Title,
                 newWager.Description,
-                newWager.CreatorId,
+                creatorId,
                 account.Username,
                 newWager.Ante,
                 GetPlayerCap(newWager.LobbySize));

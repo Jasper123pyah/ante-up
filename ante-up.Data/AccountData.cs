@@ -61,5 +61,10 @@ namespace ante_up.Data
                 .ThenInclude(x => x.Players)
                 .FirstOrDefault(a => a.Id.ToString() == id);
         }
+
+        public List<Account> GetAllAccounts()
+        {
+            return _anteContext.Account.Include(x => x.Team).ThenInclude(x => x.Players).ToList();
+        }
     }
 }

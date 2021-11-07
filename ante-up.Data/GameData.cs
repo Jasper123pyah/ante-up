@@ -33,5 +33,12 @@ namespace ante_up.Data
             _anteContext.Game.Add(game);
             _anteContext.SaveChanges();
         }
+
+        public void DeleteGame(Game game)
+        {
+            Game deletedGame = GetAllGames().FirstOrDefault(x => x.Id == game.Id)!;
+            _anteContext.Remove(deletedGame);
+            _anteContext.SaveChanges();
+        }
     }
 }

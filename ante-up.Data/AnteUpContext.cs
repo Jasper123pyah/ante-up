@@ -18,7 +18,6 @@ namespace ante_up.Data
         {
             modelBuilder.Entity<Account>().HasKey(x => x.Id);
             modelBuilder.Entity<FriendRequest>().HasKey(x => x.Id);
-            
         }
         public AnteUpContext(DbContextOptions options) : base(options){}
 

@@ -13,7 +13,8 @@ namespace ante_up.Tests
         private readonly AccountLogic _accountLogic = new (new FakeAccountData());
         
         public FriendLogicTests()
-        { 
+        {
+           
         }
     }
 }

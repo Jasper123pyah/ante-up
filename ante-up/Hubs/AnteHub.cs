@@ -15,7 +15,6 @@ namespace ante_up.Hubs
 {
     public class AnteHub : Hub
     {
-        private readonly JWTLogic _jwtLogic;
         private readonly FriendLogic _friendLogic;
         private readonly AccountLogic _accountLogic;
         private readonly WagerLogic _wagerLogic;
@@ -23,7 +22,6 @@ namespace ante_up.Hubs
 
         public AnteHub(IAnteUpContext context)
         {
-            _jwtLogic = new JWTLogic();
             _friendLogic = new FriendLogic(new AccountData(context), new FriendData(context));
             _accountLogic = new AccountLogic(new AccountData(context));
             _wagerLogic = new WagerLogic(new WagerData(context), new AccountData(context));
@@ -38,19 +36,19 @@ namespace ante_up.Hubs
 
         public async Task Login(string token)
         {
-            string accountId = _jwtLogic.GetId(token);
+            string accountId = JWTLogic.GetId(token);
             _accountLogic.SaveConnectionId(accountId, Context.ConnectionId);
         }
 
         public async Task Logout(string token)
         {
-            string accountId = _jwtLogic.GetId(token);
+            string accountId = JWTLogic.GetId(token);
             _accountLogic.RemoveConnectionId(accountId, Context.ConnectionId);
         }
 
         public async Task JoinLobby(LobbyUser lobbyJoiner)
         {
-            string userId = _jwtLogic.GetId(lobbyJoiner.Token);
+            string userId = JWTLogic.GetId(lobbyJoiner.Token);
             await Groups.AddToGroupAsync(Context.ConnectionId, lobbyJoiner.Lobby);
 
             _wagerLogic.JoinTeam(userId,lobbyJoiner.Lobby, lobbyJoiner.Team);
@@ -67,12 +65,12 @@ namespace ante_up.Hubs
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyLeaver.Lobby);
 
-            string userId = _jwtLogic.GetId(lobbyLeaver.Token);
+            string userId = JWTLogic.GetId(lobbyLeaver.Token);
             Wager wager = _wagerLogic.GetWagerById(lobbyLeaver.Lobby);
 
-            _wagerLogic.LeaveWager(wager.Id.ToString(), userId);
+            int wagerCount =  _wagerLogic.LeaveWager(wager.Id.ToString(), userId);
 
-            if (wager == null)
+            if (wagerCount == 0)
             {
                 await Clients.Caller.SendAsync("LobbyGone");
             }
@@ -92,7 +90,7 @@ namespace ante_up.Hubs
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyKick.Lobby);
             Wager wager = _wagerLogic.GetWagerById(lobbyKick.Lobby);
 
-            if (_jwtLogic.GetId(lobbyKick.HostToken) == wager.HostId)
+            if (JWTLogic.GetId(lobbyKick.HostToken) == wager.HostId)
                 _wagerLogic.LeaveWager(wager.Id.ToString(), lobbyKick.User);
 
             else
@@ -108,7 +106,7 @@ namespace ante_up.Hubs
 
         public async Task SendFriendRequest(HubFriend hubFriend)
         {
-            string accountId = _jwtLogic.GetId(hubFriend.Token);
+            string accountId = JWTLogic.GetId(hubFriend.Token);
             string result = _friendLogic.FriendRequest(hubFriend.FriendName, accountId);
 
             if (result != FriendRequestResponses.Success.GetDescription())
@@ -127,7 +125,7 @@ namespace ante_up.Hubs
 
         public async Task SendFriendMessage(FriendMessage friendMessage)
         {
-            string senderId = _jwtLogic.GetId(friendMessage.Sender);
+            string senderId = JWTLogic.GetId(friendMessage.Sender);
 
             _chatLogic.SendFriendMessage(friendMessage.Receiver, senderId, friendMessage.Message);
             await Clients.Caller.SendAsync("NewFriendMessage");
@@ -141,7 +139,7 @@ namespace ante_up.Hubs
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, lobbyMessage.LobbyId);
             _chatLogic.SendWagerMessage(lobbyMessage);
-
+        
             await Clients.Group(lobbyMessage.LobbyId).SendAsync("NewLobbyMessage");
         }
     }

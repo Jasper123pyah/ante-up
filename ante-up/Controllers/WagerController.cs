@@ -21,14 +21,12 @@ namespace ante_up.Controllers
     {
         private readonly WagerLogic _wagerLogic;
         private readonly ChatLogic _chatLogic;
-        private readonly JWTLogic _jwtLogic;
 
         public WagerController(IAnteUpContext context)
         {
             _wagerLogic = new WagerLogic(new WagerData(context), new AccountData(context));
             _chatLogic = new ChatLogic(new WagerData(context), new AccountData(context), new ChatData(context),
                 new FriendData(context));
-            _jwtLogic = new JWTLogic();
         }
 
         [HttpGet("/wager/game/{gameName}")]
@@ -38,31 +36,29 @@ namespace ante_up.Controllers
         }
 
         [HttpGet("/wager/{id}")]
-        public ViewWager GetWagerById(string id)
+        public IActionResult GetWagerById(string id)
         {
             ViewWager viewWager = _wagerLogic.CreateViewWager(id);
-            return viewWager;
+            return StatusCode(200, viewWager);
         }
 
         [HttpPost("/wager")]
         public string NewWager(ApiWager newWager)
         {
-            newWager.CreatorId = _jwtLogic.GetId(newWager.CreatorId);
-            return _wagerLogic.AddNewWager(newWager);
+            string creatorId = JWTLogic.GetId(Request.Headers["Authorization"]);
+            return _wagerLogic.AddNewWager(newWager, creatorId);
         }
 
         [HttpGet("/wager/chat")]
         public Chat GetWagerChat(string id)
         {
-            Chat chat = _chatLogic.GetWagerChat(id);
-            chat.SortByTime();
-            return chat;
+            return _chatLogic.GetWagerChat(id);;
         }
 
         [HttpPost("/wager/leave")]
         public void LeaveTeam(ApiLobby apiLobby)
         {
-            _wagerLogic.LeaveWager(apiLobby.WagerId, apiLobby.PlayerId);
+            _wagerLogic.LeaveWager(apiLobby.WagerId, JWTLogic.GetId(Request.Headers["Authorization"]));
         }
     }
 }

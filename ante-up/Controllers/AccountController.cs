@@ -20,14 +20,12 @@ namespace ante_up.Controllers
     [Route("[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly JWTLogic _jwtLogic;
         private readonly AccountLogic _accountLogic;
         private readonly FriendLogic _friendLogic;
         private readonly ChatLogic _chatLogic;
 
         public AccountController(IAnteUpContext context)
         {
-            _jwtLogic = new JWTLogic();
             _accountLogic = new AccountLogic(new AccountData(context));
             _friendLogic = new FriendLogic(new AccountData(context), new FriendData(context));
             _chatLogic = new ChatLogic(new WagerData(context), new AccountData(context), new ChatData(context),
@@ -47,37 +45,38 @@ namespace ante_up.Controllers
             ApiLogin apiLogin = _accountLogic.LoginCheck(login.Email, login.Password);
             return StatusCode(200, apiLogin);
         }
-        [HttpGet("/account/friends/{token}")]
-        public List<string> GetFriends(string token)
+        
+        [HttpGet("/account/friends")]
+        public List<string> GetFriends()
         {
-            string id = _jwtLogic.GetId(token);
+            string id = JWTLogic.GetId(Request.Headers["Authorization"]);
             return _friendLogic.GetFriendNames(id);
         }
+        
 
-        [HttpGet("/account/friend/chat")]
-        public Chat GetFriendChat(ApiFriendChat apiFriendChat)
+        [HttpGet("/account/friend/chat/{friendName}")]
+        public IActionResult GetFriendChat([FromQuery] string friendName)
         {
-            string accountId = _jwtLogic.GetId(apiFriendChat.Token);
-            Chat chat = _chatLogic.GetFriendChat(apiFriendChat.FriendName, accountId);
-            chat.SortByTime();
-            return chat;
+            string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
+            string friendId = _accountLogic.GetAccountByUserName(friendName).Id.ToString();
+            Chat chat = _chatLogic.GetFriendChat(friendId, accountId);
+            return StatusCode(200, chat);
         }
 
-        [HttpGet("/account/friendrequests/{token}")]
-        public List<string> GetFriendRequests(string token)
+        [HttpGet("/account/friendrequests")]
+        public List<string> GetFriendRequests()
         {
-            string id = _jwtLogic.GetId(token);
+            string id = JWTLogic.GetId(Request.Headers["Authorization"]);
             return _friendLogic.GetFriendRequestNames(id);
         }
 
         [HttpGet("/account/info")]
-        public ApiAccountInfo GetAccountInfo(string token)
+        public ApiAccountInfo GetAccountInfo()
         {
-            if (token == null)
+            if (Request.Headers["Authorization"].ToString() == null)
                 return new ApiAccountInfo();
 
-            string id = _jwtLogic.GetId(token);
-            
+            string id = JWTLogic.GetId(Request.Headers["Authorization"]);
             ApiAccountInfo accountInfo = _accountLogic.GetAccountInfo(id);
             return accountInfo;
         }
@@ -85,7 +84,7 @@ namespace ante_up.Controllers
         [HttpPost("/account/friendrequest")]
         public void RespondToFriendRequest(ApiFriendRequestResponse response)
         {
-            string accountId = _jwtLogic.GetId(response.Token);
+            string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
             _friendLogic.FriendRequestResponse(accountId, response.Accepted, response.FriendName);
         }
 
