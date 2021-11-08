@@ -35,8 +35,8 @@ namespace ante_up.Data
             return _anteContext.Friendship.Include(x => x.Chat)
                 .ThenInclude(x => x.Messages)
                 .FirstOrDefault(x =>
-                    x.AccountId1 == accountId || x.AccountId1 == friendId &&
-                    x.AccountId2 == accountId || x.AccountId2 == friendId)!;
+                    x.AccountId1 == accountId && x.AccountId2 == friendId ||
+                    x.AccountId2 == accountId && x.AccountId1 == friendId)!;
         }
 
         public void CreateFriendRequest(Account account, string requesterId, string requesterName)

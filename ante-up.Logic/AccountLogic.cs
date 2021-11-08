@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
 using ante_up.Common.Interfaces.Data;
@@ -44,7 +45,7 @@ namespace ante_up.Logic
         {
             Account account = GetAccountById(accountId);
             if (account == null)
-                return null;
+                throw new ApiException(404, "Account not found.");
 
             ApiAccountInfo accountInfo = new()
             {
@@ -65,10 +66,17 @@ namespace ante_up.Logic
                 throw new ApiException(404, "There is no account with this email.");
             if (!BCrypt.Net.BCrypt.Verify(password, account.Password))
                 throw new ApiException(401, "Incorrect password.");
-
+            if (account.IsAdmin)
+                return new ApiLogin()
+                {
+                    Username = account.Username,
+                    Token = JWTLogic.GetToken(
+                        JWTLogic.GetAdminJWTContainerModel(account.Username, account.Id.ToString()))
+                };
+            
             ApiLogin login = new()
             {
-                Username = account.Username, Token = new JWTLogic().GetToken(account.Username, account.Id.ToString())
+                Username = account.Username, Token = JWTLogic.GetToken(JWTLogic.GetJWTContainerModel(account.Username, account.Id.ToString()))
             };
 
             return login;
@@ -84,11 +92,6 @@ namespace ante_up.Logic
             account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
             _accountData.Register(new Account(account.Email, account.Username, account.Password));
         }
-
-        public void RemoveAccount(string accountId)
-        {
-            Account account = GetAccountById(accountId);
-            _accountData.DeleteAccount(account);
-        }
+        
     }
 }

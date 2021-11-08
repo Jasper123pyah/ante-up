@@ -27,5 +27,10 @@ namespace ante_up.Tests.FakeData
         {
             Games.Add(game);
         }
+
+        public void DeleteGame(Game game)
+        {
+            Games.Remove(game);
+        }
     }
 }

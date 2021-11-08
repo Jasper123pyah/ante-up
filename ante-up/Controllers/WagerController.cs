@@ -21,48 +21,47 @@ namespace ante_up.Controllers
     {
         private readonly WagerLogic _wagerLogic;
         private readonly ChatLogic _chatLogic;
-        private readonly JWTLogic _jwtLogic;
 
         public WagerController(IAnteUpContext context)
         {
             _wagerLogic = new WagerLogic(new WagerData(context), new AccountData(context));
             _chatLogic = new ChatLogic(new WagerData(context), new AccountData(context), new ChatData(context),
                 new FriendData(context));
-            _jwtLogic = new JWTLogic();
         }
 
         [HttpGet("/wager/game/{gameName}")]
-        public List<ViewWager> GetWagerByGame(string gameName)
+        public IActionResult GetWagerByGame(string gameName)
         {
-            return _wagerLogic.GetWagersInGame(gameName);
+            return StatusCode(200, _wagerLogic.GetWagersInGame(gameName));
         }
 
         [HttpGet("/wager/{id}")]
-        public ViewWager GetWagerById(string id)
+        public IActionResult GetWagerById(string id)
         {
             ViewWager viewWager = _wagerLogic.CreateViewWager(id);
-            return viewWager;
+            return StatusCode(200, viewWager);
         }
 
         [HttpPost("/wager")]
-        public string NewWager(ApiWager newWager)
+        public IActionResult NewWager(ApiWager newWager)
         {
-            newWager.CreatorId = _jwtLogic.GetId(newWager.CreatorId);
-            return _wagerLogic.AddNewWager(newWager);
+            return StatusCode(200, _wagerLogic.AddNewWager(newWager, Request.Headers["Authorization"]));
         }
 
         [HttpGet("/wager/chat")]
-        public Chat GetWagerChat(string id)
+        public IActionResult GetWagerChat(string id)
         {
-            Chat chat = _chatLogic.GetWagerChat(id);
-            chat.SortByTime();
-            return chat;
+            return StatusCode(200, _chatLogic.GetWagerChat(id));
         }
 
         [HttpPost("/wager/leave")]
-        public void LeaveTeam(ApiLobby apiLobby)
+        public IActionResult LeaveTeam(ApiLobby apiLobby)
         {
-            _wagerLogic.LeaveWager(apiLobby.WagerId, apiLobby.PlayerId);
+            string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
+            if (accountId == null)
+                throw new ApiException(401, "Token is invalid.");
+            
+            return StatusCode(200, _wagerLogic.LeaveWager(apiLobby.WagerId, accountId));
         }
     }
 }

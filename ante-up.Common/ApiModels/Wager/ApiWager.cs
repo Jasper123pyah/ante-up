@@ -7,7 +7,6 @@ namespace ante_up.Common.ApiModels
         public string Description { get; set; }
         public int Ante { get; set; }
         public string LobbySize { get; set; }
-        public string CreatorId { get; set; }
         
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace ante_up
@@ -55,12 +56,14 @@ namespace ante_up
         {
             if (env.IsDevelopment())
             {
+                IdentityModelEventSource.ShowPII = true; 
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ante_up v1"));
             }
             else
             {
+                IdentityModelEventSource.ShowPII = true; 
                 app.UseHsts();
             }
             
@@ -75,7 +78,7 @@ namespace ante_up
                 .AllowAnyHeader()
                 .SetIsOriginAllowed(origin => true)
                 .AllowCredentials());
-
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();

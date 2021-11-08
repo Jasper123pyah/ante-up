@@ -7,6 +7,7 @@ using ante_up.Common.DataModels;
 using ante_up.Common.HubModels;
 using ante_up.Common.Interfaces.Data.Classes;
 using ante_up.Common.ViewModels;
+using ante_up.Logic.JWT;
 
 namespace ante_up.Logic
 {
@@ -43,18 +44,28 @@ namespace ante_up.Logic
         public ViewWager CreateViewWager(string wagerId)
         {
             Wager wager = _wagerData.GetById(wagerId);
-            wager.Chat.SortByTime();
+            if (wager != null)
+            {
+                wager.Chat.SortByTime();
 
-            ViewWager viewWager = ConvertWager(wager);
-            return viewWager;
+                ViewWager viewWager = ConvertWager(wager);
+                return viewWager;
+            }
+            else
+            {
+                throw new ApiException(404, "Wager not found.");
+            }
         }
 
         public List<ViewWager> GetWagersInGame(string gameName)
         {
-            return _wagerData.GetWagerByGame(gameName).Select(wager => ConvertWager(wager)).ToList();
+            List<Wager> wagers = _wagerData.GetWagerByGame(gameName).ToList();
+            if (wagers == null)
+                throw new ApiException(404, "No wagers.");
+            return wagers.Select(wager => ConvertWager(wager)).ToList();
         }
 
-        private ViewWager ConvertWager(Wager wager)
+        private static ViewWager ConvertWager(Wager wager)
         {
             ViewWager viewWager = new()
             {
@@ -81,7 +92,7 @@ namespace ante_up.Logic
             return viewWager;
         }
 
-        private List<ViewAccount> ConvertAccounts(List<Account> accounts)
+        private static List<ViewAccount> ConvertAccounts(IEnumerable<Account> accounts)
         {
             return accounts.Select(account => new ViewAccount()
             {
@@ -91,20 +102,26 @@ namespace ante_up.Logic
             }).ToList();
         }
 
-        public void LeaveWager(string wagerId, string accountId)
+        public int LeaveWager(string wagerId, string accountId)
         {
             Account account = _accountData.GetAccountById(accountId)!;
             Wager wager = _wagerData.GetById(wagerId);
             
             _wagerData.RemoveFromTeam(wager, account);
-            if (wager.HostId == account.Id.ToString())
+            if (wager != null && wager.HostId == account.Id.ToString())
             {
                 if (wager.Team1.Players.FirstOrDefault()?.Id != null)
-                    _wagerData.ChangeHost(wager, wager.Team1.Players.FirstOrDefault()?.Id.ToString());  
+                    _wagerData.ChangeHost(wager, wager.Team1.Players.FirstOrDefault()?.Id.ToString());
                 else if (wager.Team2.Players.FirstOrDefault()?.Id != null)
                     _wagerData.ChangeHost(wager, wager.Team2.Players.FirstOrDefault()?.Id.ToString());
-                else _wagerData.DeleteWager(wager);
+                else
+                {
+                    _wagerData.DeleteWager(wager);
+                    return 0;
+                }
             }
+
+            return wager.Team1.Players.Count + wager.Team2.Players.Count;
         }
 
         public void JoinTeam(string accountId, string wagerId, int teamNumber)
@@ -118,14 +135,20 @@ namespace ante_up.Logic
             
             _wagerData.JoinTeam(wager, account, teamNumber);
         }
-        public string AddNewWager(ApiWager newWager)
+        public string AddNewWager(ApiWager newWager, string token)
         {
-            Account account = _accountData.GetAccountById(newWager.CreatorId);
+            string creatorId = JWTLogic.GetId(token);
+            if (creatorId == null)
+                throw new ApiException(401, "Invalid Token.");
+            Account account = _accountData.GetAccountById(creatorId);
+            if (account == null)
+                throw new ApiException(404, "Account not found.");
+            
             Wager wager = new(
                 newWager.Game,
                 newWager.Title,
                 newWager.Description,
-                newWager.CreatorId,
+                creatorId,
                 account.Username,
                 newWager.Ante,
                 GetPlayerCap(newWager.LobbySize));

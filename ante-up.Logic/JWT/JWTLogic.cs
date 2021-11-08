@@ -1,12 +1,13 @@
 using System;
 using System.Linq;
 using System.Security.Claims;
+using ante_up.Common.ApiModels;
 
 namespace ante_up.Logic.JWT
 {
-    public class JWTLogic
+    public static class JWTLogic
     { 
-        private static JWTContainerModel GetJWTContainerModel(string name, string id)
+        public static JWTContainerModel GetJWTContainerModel(string name, string id)
         {
             return new JWTContainerModel()
             {
@@ -17,19 +18,41 @@ namespace ante_up.Logic.JWT
                 }
             };
         }
-        public string GetId(string token)
+        public static JWTContainerModel GetAdminJWTContainerModel(string name, string id)
         {
-            IAuthService authservice = new JWTService("dafa1f10ce5343fa8ed9316af029162b");
+            return new JWTContainerModel()
+            {
+                Claims = new Claim[]
+                {
+                    new Claim(ClaimTypes.Authentication, "thispersonisanadmin"),
+                    new Claim(ClaimTypes.Name, name),
+                    new Claim(ClaimTypes.NameIdentifier, id)
+                }
+            };
+        }
+        public static string GetId(string token)
+        {
+            IAuthService authservice = new JWTService(new JWTContainerModel().SecretKey);
             return authservice.GetTokenClaims(token).ToList().FirstOrDefault(e => e.Type.Equals(ClaimTypes.NameIdentifier))?.Value;
         }
-        public string GetName(string token)
+        public static string GetName(string token)
         {
             IAuthService authservice = new JWTService("dafa1f10ce5343fa8ed9316af029162b");
             return authservice.GetTokenClaims(token).ToList().FirstOrDefault(e => e.Type.Equals(ClaimTypes.Name))?.Value;
         }
-        public string GetToken(string name, string accountId)
+
+        public static bool CheckAdminToken(string token)
         {
-            IAuthContainerModel model = GetJWTContainerModel(name, accountId);
+            IAuthService authService = new JWTService("dafa1f10ce5343fa8ed9316af029162b");
+            string adminString = authService.GetTokenClaims(token).ToList().FirstOrDefault(e => 
+                    e.Type.Equals(ClaimTypes.Authentication))?.Value;
+            bool isAdmin = adminString == "thispersonisanadmin";
+            return isAdmin;
+        }
+        
+        public static string GetToken(JWTContainerModel containerModel)
+        {
+            IAuthContainerModel model = containerModel;
             IAuthService authService = new JWTService(model.SecretKey);
 
             string token = authService.GenerateToken(model);

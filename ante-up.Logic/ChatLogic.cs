@@ -1,6 +1,8 @@
+using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
 using ante_up.Common.HubModels;
 using ante_up.Common.Interfaces.Data.Classes;
+using ante_up.Logic.JWT;
 
 namespace ante_up.Logic
 {
@@ -22,12 +24,17 @@ namespace ante_up.Logic
         public void SendWagerMessage(LobbyMessage lobbyMessage)
         {
             Wager wager = _wagerData.GetById(lobbyMessage.LobbyId);
-            Message message = new(_accountData.GetAccountById(lobbyMessage.Sender)?.Username, lobbyMessage.Message);
+            Account sender = _accountData.GetAccountById(JWTLogic.GetId(lobbyMessage.Sender));
+            Message message = new(sender.Username, lobbyMessage.Message);
             _chatData.SendWagerMessage(wager, message);
         }
         public Chat GetFriendChat(string friendId, string accountId)
         {
-            return _friendData.GetFriendShip(accountId, friendId).Chat;
+            Chat chat = _friendData.GetFriendShip(accountId, friendId).Chat;
+            if (chat == null)
+                throw new ApiException(404, "Chat not found.");
+            chat.SortByTime();
+            return chat;
         }
 
         public void SendFriendMessage(string receiverName, string senderId, string text)
@@ -42,7 +49,11 @@ namespace ante_up.Logic
         public Chat GetWagerChat(string wagerId)
         {
             Wager wager = _wagerData.GetById(wagerId);
-            return _chatData.GetWagerChat(wager);
+            if (wager == null)
+                throw new ApiException(404, "Wager not found.");
+            Chat chat = _chatData.GetWagerChat(wager);
+            chat.SortByTime();
+            return chat;
         }
     }
 }

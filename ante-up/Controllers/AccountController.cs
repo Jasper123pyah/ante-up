@@ -20,14 +20,12 @@ namespace ante_up.Controllers
     [Route("[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly JWTLogic _jwtLogic;
         private readonly AccountLogic _accountLogic;
         private readonly FriendLogic _friendLogic;
         private readonly ChatLogic _chatLogic;
 
         public AccountController(IAnteUpContext context)
         {
-            _jwtLogic = new JWTLogic();
             _accountLogic = new AccountLogic(new AccountData(context));
             _friendLogic = new FriendLogic(new AccountData(context), new FriendData(context));
             _chatLogic = new ChatLogic(new WagerData(context), new AccountData(context), new ChatData(context),
@@ -47,47 +45,52 @@ namespace ante_up.Controllers
             ApiLogin apiLogin = _accountLogic.LoginCheck(login.Email, login.Password);
             return StatusCode(200, apiLogin);
         }
-        [HttpGet("/account/friends/{token}")]
-        public List<string> GetFriends(string token)
+        
+        [HttpGet("/account/friends")]
+        public IActionResult GetFriends()
         {
-            string id = _jwtLogic.GetId(token);
-            return _friendLogic.GetFriendNames(id);
+            string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
+            
+            if (accountId == null)
+                throw new ApiException(401, "Invalid Token.");
+            
+            return StatusCode(200, _friendLogic.GetFriendNames(accountId));
+        }
+        
+
+        [HttpGet("/account/friend/chat/{friendName}")]
+        public IActionResult GetFriendChat(string friendName)
+        {
+            string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
+            string friendId = _accountLogic.GetAccountByUserName(friendName).Id.ToString();
+            Chat chat = _chatLogic.GetFriendChat(friendId, accountId);
+            return StatusCode(200, chat);
         }
 
-        [HttpGet("/account/friend/chat")]
-        public Chat GetFriendChat(ApiFriendChat apiFriendChat)
+        [HttpGet("/account/friendrequests")]
+        public IActionResult GetFriendRequests()
         {
-            string accountId = _jwtLogic.GetId(apiFriendChat.Token);
-            Chat chat = _chatLogic.GetFriendChat(apiFriendChat.FriendName, accountId);
-            chat.SortByTime();
-            return chat;
-        }
-
-        [HttpGet("/account/friendrequests/{token}")]
-        public List<string> GetFriendRequests(string token)
-        {
-            string id = _jwtLogic.GetId(token);
-            return _friendLogic.GetFriendRequestNames(id);
+            return StatusCode(200, _friendLogic.GetFriendRequestNames(Request.Headers["Authorization"]));
         }
 
         [HttpGet("/account/info")]
-        public ApiAccountInfo GetAccountInfo(string token)
+        public IActionResult GetAccountInfo()
         {
-            if (token == null)
-                return new ApiAccountInfo();
-
-            string id = _jwtLogic.GetId(token);
+            string id = JWTLogic.GetId(Request.Headers["Authorization"]);
             
+            if (id == null)
+                throw new ApiException(401, "Invalid Token.");
+
             ApiAccountInfo accountInfo = _accountLogic.GetAccountInfo(id);
-            return accountInfo;
+            return StatusCode(200, accountInfo);
         }
 
         [HttpPost("/account/friendrequest")]
-        public void RespondToFriendRequest(ApiFriendRequestResponse response)
+        public IActionResult RespondToFriendRequest(ApiFriendRequestResponse response)
         {
-            string accountId = _jwtLogic.GetId(response.Token);
-            _friendLogic.FriendRequestResponse(accountId, response.Accepted, response.FriendName);
+            _friendLogic.FriendRequestResponse(Request.Headers["Authorization"], response.Accepted,
+                response.FriendName);
+            return StatusCode(200);
         }
-
     }
 }

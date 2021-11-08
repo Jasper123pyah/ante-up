@@ -50,5 +50,10 @@ namespace ante_up.Tests.FakeData
         {
             return Accounts.FirstOrDefault(x => x.Id.ToString() == id);
         }
+
+        public List<Account> GetAllAccounts()
+        {
+            return Accounts;
+        }
     }
 }
