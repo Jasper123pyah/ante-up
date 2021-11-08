@@ -66,7 +66,7 @@ namespace ante_up.Logic
                 throw new ApiException(404, "There is no account with this email.");
             if (!BCrypt.Net.BCrypt.Verify(password, account.Password))
                 throw new ApiException(401, "Incorrect password.");
-            if (account.Id.ToString() == "")
+            if (account.IsAdmin)
                 return new ApiLogin()
                 {
                     Username = account.Username,
@@ -92,18 +92,6 @@ namespace ante_up.Logic
             account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
             _accountData.Register(new Account(account.Email, account.Username, account.Password));
         }
-
-        public List<Account> GetAllAccounts(string token)
-        {
-            if (JWTLogic.CheckAdminToken(token))
-                return _accountData.GetAllAccounts();
-            throw new ApiException(401, "Token is valid.");
-        }
         
-        public void RemoveAccount(string accountId)
-        {
-            Account account = GetAccountById(accountId);
-            _accountData.DeleteAccount(account);
-        }
     }
 }

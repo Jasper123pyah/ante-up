@@ -45,7 +45,7 @@ namespace ante_up.Controllers
         [HttpPost("/wager")]
         public IActionResult NewWager(ApiWager newWager)
         {
-            return StatusCode(200, _wagerLogic.AddNewWager(newWager, JWTLogic.GetId(Request.Headers["Authorization"])));
+            return StatusCode(200, _wagerLogic.AddNewWager(newWager, Request.Headers["Authorization"]));
         }
 
         [HttpGet("/wager/chat")]
@@ -60,6 +60,7 @@ namespace ante_up.Controllers
             string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
             if (accountId == null)
                 throw new ApiException(401, "Token is invalid.");
+            
             return StatusCode(200, _wagerLogic.LeaveWager(apiLobby.WagerId, accountId));
         }
     }

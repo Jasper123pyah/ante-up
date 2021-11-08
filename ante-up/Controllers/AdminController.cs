@@ -15,19 +15,13 @@ namespace ante_up.Controllers
     public class AdminController : Controller
     {
         private readonly AccountLogic _accountLogic;
-        private readonly FriendLogic _friendLogic;
-        private readonly ChatLogic _chatLogic;
-        private readonly WagerLogic _wagerLogic;
         private readonly GameLogic _gameLogic;
-        
+        private readonly AdminLogic _adminLogic;
         public AdminController(IAnteUpContext context)
         {
             _accountLogic = new AccountLogic(new AccountData(context));
-            _friendLogic = new FriendLogic(new AccountData(context), new FriendData(context));
-            _chatLogic = new ChatLogic(new WagerData(context), new AccountData(context), new ChatData(context),
-                new FriendData(context));
             _gameLogic = new GameLogic(new GameData(context));
-            _wagerLogic = new WagerLogic(new WagerData(context), new AccountData(context));
+            _adminLogic = new AdminLogic(new AccountData(context), new FriendData(context));
         }
         
         [HttpGet("/admin")]
@@ -39,7 +33,7 @@ namespace ante_up.Controllers
         [HttpGet("/admin/accounts")]
         public IActionResult GetAllAccounts()
         {
-            return StatusCode(200, _accountLogic.GetAllAccounts(Request.Headers["Authorization"]));
+            return StatusCode(200, _adminLogic.GetAllAdminAccounts(Request.Headers["Authorization"]));
         }
 
         [HttpPost("/admin/game")]

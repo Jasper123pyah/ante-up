@@ -8,7 +8,6 @@ namespace ante_up.Common.Interfaces.Data.Classes
         List<Friendship> GetFriends(string accountId);
 
         List<string> GetFriendRequestNames(string accountId);
-
         Friendship GetFriendShip(string accountId, string friendId);
 
         void CreateFriendRequest(Account account, string requesterId, string requesterName);

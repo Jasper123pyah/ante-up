@@ -22,9 +22,8 @@ namespace ante_up.Logic
             Friendship friendShip = new(account1.Id.ToString(), account2.Id.ToString());
             _friendData.CreateFriendship(friendShip);
         }
-        public List<string> GetFriendNames(string token)
+        public List<string> GetFriendNames(string accountId)
         {
-            string accountId = JWTLogic.GetId(token);
             if (accountId == null)
                 throw new ApiException(401, "Invalid Token.");
             
@@ -56,7 +55,7 @@ namespace ante_up.Logic
             Account account = _accountData.GetAccountById(accountId);
             if (friend?.Id == null)
                 return FriendRequestResponses.NotFound.GetDescription();
-            if (_friendData.GetFriendRequestNames(friend.Id.ToString())!.Contains(accountId))
+            if (_friendData.GetFriendRequestNames(friend.Id.ToString())!.Contains(account.Username))
                 return FriendRequestResponses.AlreadyAdded.GetDescription();
             if (GetFriendNames(accountId).Contains(friendName))
                 return FriendRequestResponses.AlreadyFriends.GetDescription();

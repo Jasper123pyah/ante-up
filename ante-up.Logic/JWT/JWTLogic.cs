@@ -46,8 +46,8 @@ namespace ante_up.Logic.JWT
             IAuthService authService = new JWTService("dafa1f10ce5343fa8ed9316af029162b");
             string adminString = authService.GetTokenClaims(token).ToList().FirstOrDefault(e => 
                     e.Type.Equals(ClaimTypes.Authentication))?.Value;
-            
-            return adminString == "thispersonisanadmin";
+            bool isAdmin = adminString == "thispersonisanadmin";
+            return isAdmin;
         }
         
         public static string GetToken(JWTContainerModel containerModel)

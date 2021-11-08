@@ -29,6 +29,22 @@ namespace ante_up.Hubs
                 new FriendData(context));
         }
 
+        private async void SendToAccount(Account account, string methodName)
+        {
+            foreach (string id in account.GetConnectionIds())
+            {
+                await Clients.User(id).SendAsync(methodName);
+            }
+        }
+
+        private async void RemoveAccountFromGroup(Account account, string groupName)
+        {
+            foreach (string id in account.GetConnectionIds())
+            {
+                await Groups.RemoveFromGroupAsync(id ,groupName);
+            }
+        }
+        
         public async Task CreateLobby(string lobbyId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
@@ -87,20 +103,19 @@ namespace ante_up.Hubs
 
         public async Task KickPlayer(LobbyKick lobbyKick)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyKick.Lobby);
             Wager wager = _wagerLogic.GetWagerById(lobbyKick.Lobby);
-
+            Account account = _accountLogic.GetAccountById(lobbyKick.User);
+            
             if (JWTLogic.GetId(lobbyKick.HostToken) == wager.HostId)
-                _wagerLogic.LeaveWager(wager.Id.ToString(), lobbyKick.User);
-
-            else
             {
+                _wagerLogic.LeaveWager(wager.Id.ToString(), lobbyKick.User);
+                RemoveAccountFromGroup(account, lobbyKick.Lobby);
                 LobbyResponse lobbyLeave = new()
                 {
                     Player = _accountLogic.GetAccountById(lobbyKick.User)?.Username
                 };
                 await Clients.Group(lobbyKick.Lobby).SendAsync("LobbyLeft", lobbyLeave);
-                await Clients.Caller.SendAsync("YouLeft");
+                SendToAccount(account, "YouLeft");
             }
         }
 
@@ -116,10 +131,7 @@ namespace ante_up.Hubs
                 await Clients.Caller.SendAsync("Friendrequest Sent", hubFriend.FriendName);
 
                 Account friend = _accountLogic.GetAccountByUserName(hubFriend.FriendName);
-                foreach (string id in friend.GetConnectionIds())
-                {
-                    await Clients.User(id).SendAsync("Friendrequest Received");
-                }
+                SendToAccount(friend, "Friendrequest Received");
             }
         }
 

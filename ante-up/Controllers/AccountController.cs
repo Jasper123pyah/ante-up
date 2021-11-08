@@ -49,12 +49,17 @@ namespace ante_up.Controllers
         [HttpGet("/account/friends")]
         public IActionResult GetFriends()
         {
-            return StatusCode(200, _friendLogic.GetFriendNames(JWTLogic.GetId(Request.Headers["Authorization"])));
+            string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
+            
+            if (accountId == null)
+                throw new ApiException(401, "Invalid Token.");
+            
+            return StatusCode(200, _friendLogic.GetFriendNames(accountId));
         }
         
 
         [HttpGet("/account/friend/chat/{friendName}")]
-        public IActionResult GetFriendChat([FromQuery] string friendName)
+        public IActionResult GetFriendChat(string friendName)
         {
             string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
             string friendId = _accountLogic.GetAccountByUserName(friendName).Id.ToString();
@@ -65,7 +70,7 @@ namespace ante_up.Controllers
         [HttpGet("/account/friendrequests")]
         public IActionResult GetFriendRequests()
         {
-            return StatusCode(200, _friendLogic.GetFriendRequestNames(JWTLogic.GetId(Request.Headers["Authorization"])));
+            return StatusCode(200, _friendLogic.GetFriendRequestNames(Request.Headers["Authorization"]));
         }
 
         [HttpGet("/account/info")]
@@ -83,7 +88,7 @@ namespace ante_up.Controllers
         [HttpPost("/account/friendrequest")]
         public IActionResult RespondToFriendRequest(ApiFriendRequestResponse response)
         {
-            _friendLogic.FriendRequestResponse(JWTLogic.GetId(Request.Headers["Authorization"]), response.Accepted,
+            _friendLogic.FriendRequestResponse(Request.Headers["Authorization"], response.Accepted,
                 response.FriendName);
             return StatusCode(200);
         }
