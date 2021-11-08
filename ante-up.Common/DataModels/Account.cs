@@ -22,6 +22,7 @@ namespace ante_up.Common.DataModels
 
         public Account(string email, string username, string password)
         {
+            Id = Guid.NewGuid();
             Email = email;
             Username = username;
             Password = password;

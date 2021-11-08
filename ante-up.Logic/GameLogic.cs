@@ -17,21 +17,7 @@ namespace ante_up.Logic
             _gameData = gameData;
         }
 
-        private void Initialize()
-        {
-            if (_gameData.GetGameByName("Fortnite") != null) return;
-            
-            _gameData.AddGame(new Game("Fortnite", "fortnite.jpg"));
-            _gameData.AddGame(new Game("Chess", "chess.jpg"));
-            _gameData.AddGame(new Game("CoD Modern Warfare", "codmw.jpg"));
-            _gameData.AddGame(new Game("CS:GO", "csgo.jpg"));
-            _gameData.AddGame(new Game("Fifa 22","fifa22.jpg"));
-            _gameData.AddGame(new Game("Madden NFL 22", "madden.jpg"));
-            _gameData.AddGame(new Game("NBA 2K22","nba2k.jpg"));
-            _gameData.AddGame(new Game("Apex Legends", "apex.jpg"));
-            _gameData.AddGame(new Game("League of Legends", "leagueoflegends.jpg"));
-            
-        }
+
 
         public void CreateGame(ApiAdminGame adminGame, string token)
         {
@@ -52,7 +38,6 @@ namespace ante_up.Logic
         }
         public List<Game> GetAllGames()
         {
-            Initialize();
             List<Game> games = _gameData.GetAllGames();
             if (games.Count == 0)
                 throw new ApiException(404, "Games not found");

@@ -30,8 +30,7 @@ namespace ante_up.Logic
         private AdminAccount CreateAdminAccountModel(Account account)
         {
             return new AdminAccount(account.Id.ToString(), account.Email, account.Username, account.Balance,
-                _friendData.GetFriends(account.Id.ToString()),
-                _friendData.GetFriendRequestNames(account.Id.ToString()), account.Stats, account.Team);
+                _friendData.GetFriends(account.Id.ToString()), account.Stats, account.Team);
         }
 
         private List<Account> GetAllAccounts()

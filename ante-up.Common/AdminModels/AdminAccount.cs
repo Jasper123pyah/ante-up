@@ -11,18 +11,16 @@ namespace ante_up.Common.AdminModels
         public string Username { get;set;}
         public int Balance { get;set;}
         public Team Team { get; private set; }
-        public List<string> FriendRequests { get;set;}
         public List<Friendship> Friendships { get; set; }
         public PlayerStats Stats { get;set;}
 
-        public AdminAccount(string id, string email, string username, int balance, List<Friendship> friendships, List<string> friendRequests, PlayerStats stats, Team team)
+        public AdminAccount(string id, string email, string username, int balance, List<Friendship> friendships,  PlayerStats stats, Team team)
         {
             Id = id;
             Email = email;
             Username = username;
             Balance = balance;
             Friendships = friendships;
-            FriendRequests = friendRequests;
             Stats = stats;
             Team = team;
         }
