@@ -11,6 +11,10 @@
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
         <PackageReference Include="NUnit" Version="3.12.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.31.0.39249">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>

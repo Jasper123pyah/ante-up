@@ -55,5 +55,10 @@ namespace ante_up.Tests.FakeData
             if (account2Request != null)
                 FriendRequests.Remove(account2Request);
         }
+
+        public string GetFriendName(string accountId, Friendship friendship)
+        {
+            return accountId == friendship.AccountId2 ? _accountData.GetAccountById(friendship.AccountId1)?.Username! : _accountData.GetAccountById(friendship.AccountId2)?.Username!;
+        }
     }
 }

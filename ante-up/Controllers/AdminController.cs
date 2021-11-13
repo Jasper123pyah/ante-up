@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using ante_up.Common.AdminModels;
 using ante_up.Common.ApiModels.Admin;
 using ante_up.Common.Interfaces.Data;
 using ante_up.Data;
@@ -21,7 +23,7 @@ namespace ante_up.Controllers
         {
             _accountLogic = new AccountLogic(new AccountData(context));
             _gameLogic = new GameLogic(new GameData(context));
-            _adminLogic = new AdminLogic(new AccountData(context), new FriendData(context));
+            _adminLogic = new AdminLogic(new AccountData(context), new FriendData(context), new WagerData(context));
         }
         
         [HttpGet("/admin")]
@@ -33,7 +35,8 @@ namespace ante_up.Controllers
         [HttpGet("/admin/accounts")]
         public IActionResult GetAllAccounts()
         {
-            return StatusCode(200, _adminLogic.GetAllAdminAccounts(Request.Headers["Authorization"]));
+            List<AdminAccount> accounts = _adminLogic.GetAllAdminAccounts(Request.Headers["Authorization"]);
+            return StatusCode(200, accounts);
         }
 
         [HttpPost("/admin/game")]

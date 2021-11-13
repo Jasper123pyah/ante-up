@@ -16,14 +16,12 @@ namespace ante_up.Logic
         {
             _gameData = gameData;
         }
-
-
-
+        
         public void CreateGame(ApiAdminGame adminGame, string token)
         {
             if (JWTLogic.CheckAdminToken(token))
                 _gameData.AddGame(new Game(adminGame.Name, adminGame.Image));
-            throw new ApiException(401, "Token is invalid.");
+            throw new ApiException(403, "Not an admin");
 
         }
         public void DeleteGame(string gameName, string token)
@@ -32,7 +30,7 @@ namespace ante_up.Logic
             if (game == null)
                 throw new ApiException(404, "Game not found.");
             if (JWTLogic.CheckAdminToken(token))
-                throw new ApiException(401, "Token is invalid.");
+                throw new ApiException(403, "Not an admin");
             
             _gameData.DeleteGame(game);
         }

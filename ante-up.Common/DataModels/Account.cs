@@ -34,7 +34,7 @@ namespace ante_up.Common.DataModels
 
         public IEnumerable<string> GetConnectionIds()
         {
-            return ConnectionIds.Select(connId => connId.Connection).ToList();;
+            return ConnectionIds.Select(connId => connId.Connection).ToList();
         }
 
         public void AddConnectionId(string connectionId)

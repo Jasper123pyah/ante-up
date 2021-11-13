@@ -50,10 +50,7 @@ namespace ante_up.Controllers
         public IActionResult GetFriends()
         {
             string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
-            
-            if (accountId == null)
-                throw new ApiException(401, "Invalid Token.");
-            
+
             return StatusCode(200, _friendLogic.GetFriendNames(accountId));
         }
         
@@ -77,9 +74,6 @@ namespace ante_up.Controllers
         public IActionResult GetAccountInfo()
         {
             string id = JWTLogic.GetId(Request.Headers["Authorization"]);
-            
-            if (id == null)
-                throw new ApiException(401, "Invalid Token.");
 
             ApiAccountInfo accountInfo = _accountLogic.GetAccountInfo(id);
             return StatusCode(200, accountInfo);

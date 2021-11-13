@@ -19,6 +19,10 @@
       </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.12" />
       <PackageReference Include="MySql.Data" Version="8.0.26" />
+      <PackageReference Include="SonarAnalyzer.CSharp" Version="8.31.0.39249">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
 </Project>

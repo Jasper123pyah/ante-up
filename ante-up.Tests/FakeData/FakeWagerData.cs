@@ -71,5 +71,9 @@ namespace ante_up.Tests.FakeData
         {
             return Wagers.Where(wager => wager.Game == gameName).ToList();
         }
+        public Wager GetWagerByTeam(Team team)
+        {
+            return Wagers.FirstOrDefault(x => x.Team1.Id == team.Id || x.Team2.Id == team.Id)!;
+        }
     }
 }

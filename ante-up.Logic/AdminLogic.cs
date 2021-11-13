@@ -13,11 +13,12 @@ namespace ante_up.Logic
     {
         private readonly IAccountData _accountData;
         private readonly IFriendData _friendData;
-
-        public AdminLogic(IAccountData accountData, IFriendData friendData)
+        private readonly IWagerData _wagerData;
+        public AdminLogic(IAccountData accountData, IFriendData friendData, IWagerData wagerData)
         {
             _accountData = accountData;
             _friendData = friendData;
+            _wagerData = wagerData;
         }
 
         public List<AdminAccount> GetAllAdminAccounts(string token)
@@ -25,15 +26,23 @@ namespace ante_up.Logic
             if (JWTLogic.CheckAdminToken(token))
                 return GetAllAccounts().Select(account => CreateAdminAccountModel(account)).ToList();
 
-            throw new ApiException(401, "Invalid Token.");
-        }
-        private AdminAccount CreateAdminAccountModel(Account account)
-        {
-            return new AdminAccount(account.Id.ToString(), account.Email, account.Username, account.Balance,
-                _friendData.GetFriends(account.Id.ToString()), account.Stats, account.Team);
+            throw new ApiException(403, "Not an admin.");
         }
 
-        private List<Account> GetAllAccounts()
+        private AdminAccount CreateAdminAccountModel(Account account)
+        {
+            return new(account.Id.ToString(), account.Email, account.Username, account.Balance,
+                ConvertFriendships(account.Id.ToString()), account.Stats, _wagerData.GetAccountWager(account));
+        }
+
+        private List<AdminFriend> ConvertFriendships(string accountId)
+        {
+            List<Friendship> friends = _friendData.GetFriends(accountId);
+
+            return friends.Select(friendship => new AdminFriend(friendship.Id.ToString(), _friendData.GetFriendName(accountId, friendship), friendship.Chat)).ToList();
+        }
+
+        private IEnumerable<Account> GetAllAccounts()
         {
             return _accountData.GetAllAccounts();
         }

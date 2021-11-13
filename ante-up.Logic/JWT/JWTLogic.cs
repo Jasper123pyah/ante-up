@@ -32,20 +32,30 @@ namespace ante_up.Logic.JWT
         }
         public static string GetId(string token)
         {
-            IAuthService authservice = new JWTService(new JWTContainerModel().SecretKey);
-            return authservice.GetTokenClaims(token).ToList().FirstOrDefault(e => e.Type.Equals(ClaimTypes.NameIdentifier))?.Value;
+            IAuthService authService = new JWTService(new JWTContainerModel().SecretKey);
+            if (!authService.IsTokenValid(token))
+                throw new ApiException(401, "Token is invalid");
+            
+            return authService.GetTokenClaims(token).FirstOrDefault(e => e.Type.Equals(ClaimTypes.NameIdentifier))?.Value;
         }
         public static string GetName(string token)
         {
-            IAuthService authservice = new JWTService("dafa1f10ce5343fa8ed9316af029162b");
-            return authservice.GetTokenClaims(token).ToList().FirstOrDefault(e => e.Type.Equals(ClaimTypes.Name))?.Value;
+            IAuthService authService = new JWTService("dafa1f10ce5343fa8ed9316af029162b");
+            if (!authService.IsTokenValid(token))
+                throw new ApiException(401, "Token is invalid");
+            
+            return authService.GetTokenClaims(token).FirstOrDefault(e => e.Type.Equals(ClaimTypes.Name))?.Value;
         }
 
         public static bool CheckAdminToken(string token)
         {
             IAuthService authService = new JWTService("dafa1f10ce5343fa8ed9316af029162b");
-            string adminString = authService.GetTokenClaims(token).ToList().FirstOrDefault(e => 
+            if (!authService.IsTokenValid(token))
+                throw new ApiException(401, "Token is invalid");
+            
+            string adminString = authService.GetTokenClaims(token).FirstOrDefault(e => 
                     e.Type.Equals(ClaimTypes.Authentication))?.Value;
+            
             bool isAdmin = adminString == "thispersonisanadmin";
             return isAdmin;
         }
