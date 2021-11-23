@@ -7,7 +7,7 @@ namespace ante_up.Tests.FakeData
 {
     public class FakeGameData : IGameData
     {
-        private List<Game> Games = new();
+        private List<Game> Games = new(){new Game("Fortnite", "fortnite.jpg")};
         public List<Game> GetAllGames()
         {
             return Games;
