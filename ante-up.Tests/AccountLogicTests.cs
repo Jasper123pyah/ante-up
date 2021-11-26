@@ -30,12 +30,9 @@ namespace ante_up.Tests
             Assert.IsTrue(result);
         }
         [Test]
-        public void GetAccountInfo_AccountInfoIsNUll()
+        public void GetAccountInfo_AccountInfoIsNull()
         {
-            ApiAccountInfo accountInfo = _accountLogic.GetAccountInfo("randomid");
-            bool result = accountInfo == null;
-
-            Assert.IsTrue(result);
+            Assert.Throws<ApiException>(() => _accountLogic.GetAccountInfo("randomid"));
         }
         [Test]
         public void GetAccountByUsername_AccountIsNotNull()

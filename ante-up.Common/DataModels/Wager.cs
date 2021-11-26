@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ante_up.Common.DataModels
 {
     public class Wager
     {
+        [Key]
         public Guid Id { get; set; }
         public string Game { get; set; }
         public string Title { get; set; }

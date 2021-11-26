@@ -30,6 +30,10 @@ namespace ante_up.Data
             return _accountData.GetAccountById(accountId)?.FriendRequests.Select(x => x.RequesterName).ToList();
         }
 
+        public string GetFriendName(string accountId, Friendship friendship)
+        {
+            return accountId == friendship.AccountId2 ? _accountData.GetAccountById(friendship.AccountId1)?.Username! : _accountData.GetAccountById(friendship.AccountId2)?.Username!;
+        }
         public Friendship GetFriendShip(string accountId, string? friendId)
         {
             return _anteContext.Friendship.Include(x => x.Chat)

@@ -13,6 +13,7 @@ namespace ante_up.Common.DataModels
         public Game(){}
         public Game(string name, string image)
         {
+            Id = Guid.NewGuid();
             Name = name;
             Image = image;
         }

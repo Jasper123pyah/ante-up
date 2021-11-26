@@ -7,7 +7,7 @@ namespace ante_up.Common.Interfaces.Data.Classes
     {
         List<Game> GetAllGames();
         List<string> GetAllGameNames();
-        Game? GetGameByName(string gameName);
+        Game GetGameByName(string gameName);
         void AddGame(Game game);
         void DeleteGame(Game game);
     }

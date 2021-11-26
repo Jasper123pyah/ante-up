@@ -11,11 +11,12 @@ namespace ante_up.Common.Interfaces.Data.Classes
 
         void JoinTeam(Wager wager, Account account, int teamNumber);
         void DeleteWager(Wager wager);
-        Wager? GetById(string id);
-        Wager? GetAccountWager(Account account);
+        Wager GetById(string id);
+        Wager GetAccountWager(Account account);
 
         void RemoveFromTeam(Wager wager, Account account);
 
         IEnumerable<Wager> GetWagerByGame(string gameName);
+        Wager GetWagerByTeam(Team team);
     }
 }

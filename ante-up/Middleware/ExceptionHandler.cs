@@ -26,17 +26,8 @@ namespace ante_up.Middleware
                 response.ContentType = "application/json";
 
                 response.StatusCode = ex.ErrorCode;
-                if (ex.ErrorCode == 401 || 
-                    ex.ErrorCode == 402 || 
-                    ex.ErrorCode == 404 ||
-                    ex.ErrorCode == 409 ||
-                    ex.ErrorCode == 500)
-                {
-                    await response.WriteAsync(JsonSerializer.Serialize(ex.ErrorMessage));
-                    return;
-                }
-
-                await response.WriteAsync("");
+               
+                await response.WriteAsync(JsonSerializer.Serialize(ex.ErrorMessage));
             }
         }
     }

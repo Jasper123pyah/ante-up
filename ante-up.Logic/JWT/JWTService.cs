@@ -76,15 +76,8 @@ namespace ante_up.Logic.JWT
             TokenValidationParameters tokenValidationParameters = GetTokenValidationParameters();
 
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-            try
-            {
-                ClaimsPrincipal tokenValid = jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
-                return tokenValid.Claims;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            ClaimsPrincipal tokenValid = jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
+            return tokenValid.Claims;
         }
     }
 }

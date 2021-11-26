@@ -12,6 +12,7 @@ namespace ante_up.Common.Interfaces.Data.Classes
 
         void CreateFriendRequest(Account account, string requesterId, string requesterName);
         void CreateFriendship(Friendship friendship);
+        string GetFriendName(string accountId, Friendship friendship);
 
         void RemoveFriendRequests(Account account1, Account account2);
     }

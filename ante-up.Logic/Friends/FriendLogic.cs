@@ -44,9 +44,7 @@ namespace ante_up.Logic
         public List<string> GetFriendRequestNames(string token)
         {
             string accountId = JWTLogic.GetId(token);
-            if (accountId == null)
-                throw new ApiException(401, "Invalid Token.");
-            
+
             return _friendData.GetFriendRequestNames(accountId);
         }
         public string FriendRequest(string friendName, string accountId)
@@ -68,9 +66,7 @@ namespace ante_up.Logic
         public void FriendRequestResponse(string token, bool accepted, string friendName)
         {
             string accountId = JWTLogic.GetId(token);
-            if (accountId == null)
-                throw new ApiException(401, "Invalid Token.");
-            
+
             Account account = _accountData.GetAccountById(accountId);
             Account friend = _accountData.GetAccountById(_accountData.GetAccountIdByUsername(friendName));
             if (accepted)

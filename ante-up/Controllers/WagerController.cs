@@ -58,8 +58,6 @@ namespace ante_up.Controllers
         public IActionResult LeaveTeam(ApiLobby apiLobby)
         {
             string accountId = JWTLogic.GetId(Request.Headers["Authorization"]);
-            if (accountId == null)
-                throw new ApiException(401, "Token is invalid.");
             
             return StatusCode(200, _wagerLogic.LeaveWager(apiLobby.WagerId, accountId));
         }
