@@ -12,9 +12,9 @@ namespace ante_up.Common.AdminModels
         public int Balance { get;set;}
         public AdminWager Wager { get; private set; }
         public List<AdminFriend> Friendships { get; set; }
-        public PlayerStats Stats { get;set;}
+        public List<PlayerStats> Stats { get;set;}
 
-        public AdminAccount(string id, string email, string username, int balance, List<AdminFriend> friendships,  PlayerStats stats, Wager wager)
+        public AdminAccount(string id, string email, string username, int balance, List<AdminFriend> friendships,  List<PlayerStats> stats, Wager wager)
         {
             Id = id;
             Email = email;

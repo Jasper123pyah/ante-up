@@ -41,6 +41,11 @@ namespace ante_up.Logic
             };
         }
 
+        public List<ViewWager> GetRecommendedWagers()
+        {
+            return new List<ViewWager>();
+        }
+        
         public ViewWager CreateViewWager(string wagerId)
         {
             Wager wager = _wagerData.GetById(wagerId);

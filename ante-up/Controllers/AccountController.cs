@@ -32,6 +32,13 @@ namespace ante_up.Controllers
                 new FriendData(context));
         }
 
+        [HttpPost("/account/{token}")]
+        public IActionResult CheckToken(string token)
+        {
+            JWTLogic.CheckToken(token);
+            return StatusCode(200);
+        }
+
         [HttpPost("/account/register")]
         public IActionResult Register(ApiAccount newAccount)
         {

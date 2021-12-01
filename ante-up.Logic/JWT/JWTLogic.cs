@@ -47,6 +47,12 @@ namespace ante_up.Logic.JWT
             return authService.GetTokenClaims(token).FirstOrDefault(e => e.Type.Equals(ClaimTypes.Name))?.Value;
         }
 
+        public static void CheckToken(string token)
+        {
+            IAuthService authService = new JWTService("dafa1f10ce5343fa8ed9316af029162b");
+            if (!authService.IsTokenValid(token))
+                throw new ApiException(401, "Token is invalid");
+        }
         public static bool CheckAdminToken(string token)
         {
             IAuthService authService = new JWTService("dafa1f10ce5343fa8ed9316af029162b");

@@ -16,8 +16,9 @@ namespace ante_up.Common.DataModels
         public Team Team { get; private set; }
         public List<ConnectionId> ConnectionIds { get;set;}
         public List<FriendRequest> FriendRequests { get;set;}
-        public PlayerStats Stats { get;set;}
+        public List<PlayerStats> Stats { get;set;}
         public bool IsAdmin { get; private set; }
+        public DateTime Created { get; set; }
         public Account() { }
 
         public Account(string email, string username, string password)
@@ -30,6 +31,7 @@ namespace ante_up.Common.DataModels
             ConnectionIds = new List<ConnectionId>();
             FriendRequests = new List<FriendRequest>();
             IsAdmin = false;
+            Created = DateTime.Today;
         }
 
         public IEnumerable<string> GetConnectionIds()
