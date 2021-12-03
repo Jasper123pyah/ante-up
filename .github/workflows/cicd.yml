@@ -16,10 +16,7 @@ jobs:
         dotnet-version: 5.0.x
     - name: Restore dependencies
       run: dotnet restore
-      
-    - name: Setup for SCS
-      uses: security-code-scan/security-code-scan-add-action@main
-      
+
     - name: Build
       run: dotnet build --no-restore
       
@@ -30,16 +27,31 @@ jobs:
       with:
         filename: CILoadTest.js
         
-    - name: Security Code Scan
-      uses: security-code-scan/security-code-scan-results-action@v1.3
-              
-    - name: Upload sarif	
-      uses: github/codeql-action/upload-sarif@v1
+  SCS:
+    runs-on: windows-latest
+    needs: test
+    steps:     
+      - uses: actions/checkout@v2
+      - uses: nuget/setup-nuget@v1.0.5
+      - uses: microsoft/setup-msbuild@v1.0.2
 
+      - name: Set up projects
+        uses: security-code-scan/security-code-scan-add-action@main
+
+      - name: Build
+        run: |
+          nuget restore
+          msbuild
+        
+      - name: Convert sarif for uploading to GitHub
+        uses: security-code-scan/security-code-scan-results-action@main
+        
+      - name: Upload sarif
+        uses: github/codeql-action/upload-sarif@v1
 
   publish:
      runs-on: ubuntu-latest
-     needs: test
+     needs: SCS 
      steps:
       -
         name: Set up QEMU
