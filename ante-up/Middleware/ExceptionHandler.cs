@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Threading.Tasks;
-using ante_up.Common.ApiModels;
+using ante_up.Common.ApiModels.Responses;
 using Microsoft.AspNetCore.Http;
 
 namespace ante_up.Middleware

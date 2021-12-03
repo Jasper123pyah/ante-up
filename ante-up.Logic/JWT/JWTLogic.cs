@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Security.Claims;
-using ante_up.Common.ApiModels;
+using ante_up.Common.ApiModels.Responses;
 
 namespace ante_up.Logic.JWT
 {

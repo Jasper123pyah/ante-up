@@ -1,5 +1,6 @@
 using System.Linq;
 using ante_up.Common.ApiModels;
+using ante_up.Common.ApiModels.Responses;
 using ante_up.Common.DataModels;
 using ante_up.Logic;
 using ante_up.Tests.FakeData;

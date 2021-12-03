@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using ante_up.Common.ApiModels;
+using ante_up.Common.ApiModels.Responses;
 using ante_up.Common.DataModels;
 using ante_up.Common.Interfaces.Data;
 using ante_up.Common.Interfaces.Data.Classes;

@@ -1,6 +1,6 @@
 using System;
 
-namespace ante_up.Common.ApiModels
+namespace ante_up.Common.ApiModels.Responses
 {
     public class ApiException : Exception 
     {

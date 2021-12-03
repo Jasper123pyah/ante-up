@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ante_up.Common.ApiModels;
+using ante_up.Common.ApiModels.Responses;
 using ante_up.Common.DataModels;
 using ante_up.Common.HubModels;
 using ante_up.Common.Interfaces.Data.Classes;
@@ -45,7 +46,7 @@ namespace ante_up.Logic
         {
             return new List<ViewWager>();
         }
-        
+
         public ViewWager CreateViewWager(string wagerId)
         {
             Wager wager = _wagerData.GetById(wagerId);
@@ -111,7 +112,7 @@ namespace ante_up.Logic
         {
             Account account = _accountData.GetAccountById(accountId)!;
             Wager wager = _wagerData.GetById(wagerId);
-            
+
             _wagerData.RemoveFromTeam(wager, account);
             if (wager != null && wager.HostId == account.Id.ToString())
             {
@@ -134,12 +135,13 @@ namespace ante_up.Logic
             Account account = _accountData.GetAccountById(accountId);
             Wager wager = _wagerData.GetById(wagerId);
             Wager currentWager = _wagerData.GetAccountWager(account);
-            
+
             if (currentWager != null && currentWager != wager)
                 LeaveWager(currentWager.Id.ToString(), accountId);
-            
+
             _wagerData.JoinTeam(wager, account, teamNumber);
         }
+
         public string AddNewWager(ApiWager newWager, string token)
         {
             string creatorId = JWTLogic.GetId(token);
@@ -148,7 +150,7 @@ namespace ante_up.Logic
             Account account = _accountData.GetAccountById(creatorId);
             if (account == null)
                 throw new ApiException(404, "Account not found.");
-            
+
             Wager wager = new(
                 newWager.Game,
                 newWager.Title,
