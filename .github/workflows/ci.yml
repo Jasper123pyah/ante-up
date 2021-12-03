@@ -16,14 +16,20 @@ jobs:
         dotnet-version: 5.0.x
     - name: Restore dependencies
       run: dotnet restore
+      
+    - name: Setup for SCS
+      uses: security-code-scan/security-code-scan-add-action@main
+      
     - name: Build
       run: dotnet build --no-restore
+      
     - name: Unit Test
       run: dotnet test --no-build --verbosity normal
     - name: Load Test
       uses: k6io/action@v0.1
       with:
         filename: CILoadTest.js
+        
     - name: Security Code Scan
       uses: security-code-scan/security-code-scan-results-action@v1.3
               
