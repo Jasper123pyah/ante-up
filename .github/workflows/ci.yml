@@ -24,6 +24,9 @@ jobs:
       uses: k6io/action@v0.1
       with:
         filename: CILoadTest.js
+    - name: Security Code Scan
+      uses: security-code-scan/security-code-scan-results-action@v1.3
+
 
   publish:
      runs-on: ubuntu-latest
