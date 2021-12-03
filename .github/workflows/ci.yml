@@ -18,8 +18,12 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Test
+    - name: Unit Test
       run: dotnet test --no-build --verbosity normal
+    - name: Load Test
+      uses: k6io/action@v0.1
+      with:
+        filename: CILoadTest.js
 
   publish:
      runs-on: ubuntu-latest
