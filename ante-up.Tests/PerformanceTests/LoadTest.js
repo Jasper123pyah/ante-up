@@ -14,7 +14,7 @@ export let options = {
     }
 }
 
-const BASE_URL = 'https://localhost:5001';
+const BASE_URL = 'http://78.47.219.206:420';
 
 export default () => {
     const responses = http.batch([
