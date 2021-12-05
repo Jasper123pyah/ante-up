@@ -56,6 +56,9 @@ namespace ante_up.Data
         public Account? GetAccountById(string? id)
         {
             return _anteContext.Account.Include(x => x.ConnectionIds)
+                .Include(x => x.GamerTags)
+                .Include(x=> x.GameStats)
+                .Include(x => x.WagerResults)
                 .Include(x => x.FriendRequests)
                 .Include(x => x.Team)
                 .ThenInclude(x => x.Players)

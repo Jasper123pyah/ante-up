@@ -18,7 +18,7 @@ namespace ante_up.Controllers
     [EnableCors("AllowCORS")]
     [ApiController]
     [Route("[controller]")]
-    public class AccountController : ControllerBase
+    public class AccountController : Controller
     {
         private readonly AccountLogic _accountLogic;
         private readonly FriendLogic _friendLogic;
@@ -42,8 +42,8 @@ namespace ante_up.Controllers
         [HttpPost("/account/register")]
         public IActionResult Register(ApiAccount newAccount)
         {
-            _accountLogic.Register(newAccount);
-            return StatusCode(200);
+            ApiLogin apiLogin = _accountLogic.Register(newAccount);
+            return StatusCode(200, apiLogin);
         }
 
         [HttpPost("/account/login")]

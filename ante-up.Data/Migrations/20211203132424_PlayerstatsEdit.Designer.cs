@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ante_up.Data;
 
 namespace ante_up.Data.Migrations
 {
     [DbContext(typeof(AnteUpContext))]
-    partial class AnteUpContextModelSnapshot : ModelSnapshot
+    [Migration("20211203132424_PlayerstatsEdit")]
+    partial class PlayerstatsEdit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -144,55 +146,55 @@ namespace ante_up.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e2108490-c403-4f1f-8dc0-914d095998ca"),
+                            Id = new Guid("0ca0de45-91db-4202-bba7-efd76fb014a0"),
                             Image = "fortnite.jpg",
                             Name = "Fortnite"
                         },
                         new
                         {
-                            Id = new Guid("b6d1a1f0-f63e-4eb5-997e-e887559167c5"),
+                            Id = new Guid("8e5492f2-c218-4edd-860b-f6312bef9348"),
                             Image = "chess.jpg",
                             Name = "Chess"
                         },
                         new
                         {
-                            Id = new Guid("167ad54f-c441-426d-a975-67a00dbe3ada"),
+                            Id = new Guid("526ce6b2-3b1e-435a-9b16-cd00d511e81d"),
                             Image = "codmw.jpg",
                             Name = "Call of Duty MW"
                         },
                         new
                         {
-                            Id = new Guid("baf06966-6cc4-4ae7-88f5-5692fef2614e"),
+                            Id = new Guid("dc6a69c0-74de-4b60-b54a-a164bd12849e"),
                             Image = "csgo.jpg",
                             Name = "CS:GO"
                         },
                         new
                         {
-                            Id = new Guid("dd286a78-71c2-4627-b21d-5426117b8162"),
+                            Id = new Guid("4b46a6a5-b631-42f5-89b4-893639026f68"),
                             Image = "fifa22.jpg",
                             Name = "Fifa 22"
                         },
                         new
                         {
-                            Id = new Guid("0416721d-d86e-4167-882b-554b796966cd"),
+                            Id = new Guid("a606d10e-e775-48a7-991a-fd49e3ab73a7"),
                             Image = "madden.jpg",
                             Name = "Madden NFL 22"
                         },
                         new
                         {
-                            Id = new Guid("f8b2bde1-66e9-40a4-98fe-262bc413dae1"),
+                            Id = new Guid("9296c4b6-cf5b-4630-8164-4ee2a86fb410"),
                             Image = "nba2k.jpg",
                             Name = "NBA 2K22"
                         },
                         new
                         {
-                            Id = new Guid("5ecb869f-230d-45f6-a93f-c36d18b74b3d"),
+                            Id = new Guid("e038e051-3341-4151-b49c-f878a8ec7b93"),
                             Image = "apex.jpg",
                             Name = "Apex Legends"
                         },
                         new
                         {
-                            Id = new Guid("ebaf0686-60a1-4cc1-a1e2-84053d3b93a7"),
+                            Id = new Guid("3472ada7-e718-4ca2-8201-d3ae28c0d91d"),
                             Image = "leagueoflegends.jpg",
                             Name = "League of Legends"
                         });
@@ -325,7 +327,7 @@ namespace ante_up.Data.Migrations
                     b.ToTable("Wager");
                 });
 
-            modelBuilder.Entity("ante_up.Common.DataModels.WagerResult", b =>
+            modelBuilder.Entity("ante_up.Common.DataModels.WagerResults", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -347,7 +349,7 @@ namespace ante_up.Data.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("WagerResult");
+                    b.ToTable("WagerResults");
                 });
 
             modelBuilder.Entity("ante_up.Common.DataModels.Account", b =>
@@ -424,7 +426,7 @@ namespace ante_up.Data.Migrations
                     b.Navigation("Team2");
                 });
 
-            modelBuilder.Entity("ante_up.Common.DataModels.WagerResult", b =>
+            modelBuilder.Entity("ante_up.Common.DataModels.WagerResults", b =>
                 {
                     b.HasOne("ante_up.Common.DataModels.Account", null)
                         .WithMany("WagerResults")

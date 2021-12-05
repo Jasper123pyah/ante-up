@@ -7,6 +7,8 @@ namespace ante_up.Data
 {
     public class AnteUpContext : DbContext, IAnteUpContext
     {
+        //dotnet ef migrations add Migration -p "../ante-up.Data"
+        //dotnet ef database update
         public DbSet<Account> Account { get; set; }
         public DbSet<Game> Game { get; set; }
         public DbSet<Wager> Wager { get; set; }

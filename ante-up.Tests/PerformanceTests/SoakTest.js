@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import {sleep} from 'k6';
+import {sleep, check} from 'k6';
 
 export let options = {
     insecureSkipTLSVerify: true,
@@ -8,7 +8,11 @@ export let options = {
         {duration: '2m', target:250}, 
         {duration: '4h', target:250},
         {duration: '2m', target:0},
-    ]
+    ],
+    thresholds:{
+        http_req_duration: ['p(95)<200'],
+        http_req_failed:['rate<0.01']
+    }
 }
 
 const BASE_URL = 'http://78.47.219.206:420';

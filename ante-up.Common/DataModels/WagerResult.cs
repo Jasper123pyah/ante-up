@@ -3,25 +3,23 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ante_up.Common.DataModels
 {
-    public class PlayerStats
+    public class WagerResult
     {
-        [Key]
+        [Key] 
         public Guid Id { get; set; }
         public string GameName { get; set; }
-        public string Record { get; set; }
         public int Earnings { get; set; }
-        public string Skill { get; set; } 
-        
-        public PlayerStats()
+        public DateTime WagerDate { get; set; }
+
+        public WagerResult()
         {
         }
 
-        public PlayerStats(string gameName, string record, int earnings, string skill)
+        public WagerResult(string gameName, int earnings)
         {
             GameName = gameName;
-            Record = record;
             Earnings = earnings;
-            Skill = skill;
+            WagerDate = DateTime.Now;
         }
     }
 }

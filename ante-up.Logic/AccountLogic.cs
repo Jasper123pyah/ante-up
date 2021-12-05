@@ -76,13 +76,14 @@ namespace ante_up.Logic
             
             ApiLogin login = new()
             {
-                Username = account.Username, Token = JWTLogic.GetToken(JWTLogic.GetJWTContainerModel(account.Username, account.Id.ToString()))
+                Username = account.Username, 
+                Token = JWTLogic.GetToken(JWTLogic.GetJWTContainerModel(account.Username, account.Id.ToString()))
             };
 
             return login;
         }
 
-        public void Register(ApiAccount account)
+        public ApiLogin Register(ApiAccount account)
         {
             if (_accountData.GetAccountIdByEmail(account.Email) != null)
                 throw new ApiException(409, "Email is already taken.");
@@ -91,6 +92,15 @@ namespace ante_up.Logic
 
             account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
             _accountData.Register(new Account(account.Email, account.Username, account.Password));
+           
+            
+            ApiLogin login = new()
+            {
+                Username = account.Username, 
+                Token = JWTLogic.GetToken(JWTLogic.GetJWTContainerModel(account.Username,  _accountData.GetAccountIdByEmail(account.Email)))
+            };
+
+            return login;
         }
         
     }

@@ -33,7 +33,7 @@ namespace ante_up.Logic
         private AdminAccount CreateAdminAccountModel(Account account)
         {
             return new(account.Id.ToString(), account.Email, account.Username, account.Balance,
-                ConvertFriendships(account.Id.ToString()), account.Stats, _wagerData.GetAccountWager(account));
+                ConvertFriendships(account.Id.ToString()),account.WagerResults, account.GameStats, _wagerData.GetAccountWager(account));
         }
 
         private List<AdminFriend> ConvertFriendships(string accountId)

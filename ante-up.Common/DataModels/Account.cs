@@ -13,10 +13,13 @@ namespace ante_up.Common.DataModels
         public string Username { get;set;}
         public string Password { get;set;}
         public int Balance { get;set;}
+        public int Elo { get; set; }
         public Team Team { get; private set; }
         public List<ConnectionId> ConnectionIds { get;set;}
         public List<FriendRequest> FriendRequests { get;set;}
-        public List<PlayerStats> Stats { get;set;}
+        public List<WagerResult> WagerResults { get; set; }
+        public List<GameStats> GameStats { get; set; }
+        public List<GamerTag> GamerTags { get; set; }
         public bool IsAdmin { get; private set; }
         public DateTime Created { get; set; }
         public Account() { }
@@ -28,8 +31,12 @@ namespace ante_up.Common.DataModels
             Username = username;
             Password = password;
             Balance = 0;
+            Elo = 1500;
             ConnectionIds = new List<ConnectionId>();
             FriendRequests = new List<FriendRequest>();
+            WagerResults = new List<WagerResult>();
+            GameStats = new List<GameStats>();
+            GamerTags = new List<GamerTag>();
             IsAdmin = false;
             Created = DateTime.Today;
         }
