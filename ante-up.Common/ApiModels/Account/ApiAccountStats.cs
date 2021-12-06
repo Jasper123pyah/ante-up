@@ -10,19 +10,17 @@ namespace ante_up.Common.ApiModels
         public string AccountName { get; set; }
         public DateTime Joined { get; set; }
         public List<GamerTag> GamerTags { get; set; }
-        public int Elo { get; set; }
         public int Earnings { get; set; }
         public int Wins { get; set; } 
         public int Losses { get; set; }
         public List<WagerResult> RecentWagers { get; set; }
         public List<ApiGameStats> GameStats { get; set; }
 
-        public ApiAccountStats(string accountName, int elo, DateTime joined, List<GamerTag> gamerTags, List<WagerResult> wagerResults, List<GameStats> gameStats)
+        public ApiAccountStats(string accountName,DateTime joined, List<GamerTag> gamerTags, List<WagerResult> wagerResults, List<GameStats> gameStats)
         {
             AccountName = accountName;
             Joined = joined;
             GamerTags = gamerTags;
-            Elo = elo;
             Earnings = wagerResults.Count != 0 ? GetEarnings(wagerResults) : 0;
             Wins = wagerResults.Count != 0 ? GetWins(wagerResults) : 0;
             Losses = wagerResults.Count != 0 ? GetLosses(wagerResults) : 0;

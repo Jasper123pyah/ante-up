@@ -22,7 +22,7 @@ namespace ante_up.Controllers
         public AdminController(IAnteUpContext context)
         {
             _accountLogic = new AccountLogic(new AccountData(context));
-            _gameLogic = new GameLogic(new GameData(context));
+            _gameLogic = new GameLogic(new GameData(context), new WagerData(context));
             _adminLogic = new AdminLogic(new AccountData(context), new FriendData(context), new WagerData(context));
         }
         

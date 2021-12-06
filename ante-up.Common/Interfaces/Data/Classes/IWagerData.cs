@@ -16,7 +16,7 @@ namespace ante_up.Common.Interfaces.Data.Classes
 
         void RemoveFromTeam(Wager wager, Account account);
 
-        IEnumerable<Wager> GetWagerByGame(string gameName);
+        List<Wager> GetWagerByGame(string gameName);
         Wager GetWagerByTeam(Team team);
     }
 }

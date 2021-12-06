@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ante_up.Common.ApiModels;
 using ante_up.Common.ApiModels.Admin;
 using ante_up.Common.ApiModels.Responses;
@@ -12,10 +13,12 @@ namespace ante_up.Logic
     public class GameLogic
     {
         private readonly IGameData _gameData;
+        private readonly IWagerData _wagerData;
 
-        public GameLogic(IGameData gameData)
+        public GameLogic(IGameData gameData, IWagerData wagerData)
         {
             _gameData = gameData;
+            _wagerData = wagerData;
         }
         
         public void CreateGame(ApiAdminGame adminGame, string token)
@@ -35,12 +38,13 @@ namespace ante_up.Logic
             
             _gameData.DeleteGame(game);
         }
-        public List<Game> GetAllGames()
+        public List<ApiGame> GetAllGames()
         {
             List<Game> games = _gameData.GetAllGames();
             if (games.Count == 0)
                 throw new ApiException(404, "Games not found");
-            return games;
+
+            return games.Select(game => new ApiGame(game.Name, game.Image, _wagerData.GetWagerByGame(game.Name).Count)).OrderByDescending(x => x.Wagers).ToList();
         }
         public List<string> GetAllGameNames()
         {

@@ -18,17 +18,26 @@ namespace ante_up.Logic
 
         public Account GetAccountById(string accountId)
         {
-            return _accountData.GetAccountById(accountId);
+            Account account = _accountData.GetAccountById(accountId);
+            if (account == null)
+                throw new ApiException(404, "There is no account with this email.");
+            return account;
         }
 
         public Account GetAccountByUserName(string userName)
         {
-            return GetAccountById(_accountData.GetAccountIdByUsername(userName));
+            Account account = GetAccountById(_accountData.GetAccountIdByUsername(userName));
+            if (account == null)
+                throw new ApiException(404, "Account not found.");
+            return account;
         }
 
         private Account GetAccountByEmail(string email)
         {
-            return GetAccountById(_accountData.GetAccountIdByEmail(email));
+            Account account =  GetAccountById(_accountData.GetAccountIdByEmail(email));
+            if (account == null)
+                throw new ApiException(404, "Account not found.");
+            return account;
         }
         public void SaveConnectionId(string accountId, string connectionId)
         {
@@ -44,8 +53,6 @@ namespace ante_up.Logic
         public ApiAccountInfo GetAccountInfo(string accountId)
         {
             Account account = GetAccountById(accountId);
-            if (account == null)
-                throw new ApiException(404, "Account not found.");
 
             ApiAccountInfo accountInfo = new()
             {
@@ -61,9 +68,7 @@ namespace ante_up.Logic
         public ApiLogin LoginCheck(string accountEmail, string password)
         {
             Account account = GetAccountByEmail(accountEmail);
-
-            if (account == null)
-                throw new ApiException(404, "There is no account with this email.");
+            
             if (!BCrypt.Net.BCrypt.Verify(password, account.Password))
                 throw new ApiException(401, "Incorrect password.");
             if (account.IsAdmin)

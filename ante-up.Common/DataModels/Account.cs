@@ -13,7 +13,6 @@ namespace ante_up.Common.DataModels
         public string Username { get;set;}
         public string Password { get;set;}
         public int Balance { get;set;}
-        public int Elo { get; set; }
         public Team Team { get; private set; }
         public List<ConnectionId> ConnectionIds { get;set;}
         public List<FriendRequest> FriendRequests { get;set;}
@@ -31,7 +30,6 @@ namespace ante_up.Common.DataModels
             Username = username;
             Password = password;
             Balance = 0;
-            Elo = 1500;
             ConnectionIds = new List<ConnectionId>();
             FriendRequests = new List<FriendRequest>();
             WagerResults = new List<WagerResult>();

@@ -106,7 +106,7 @@ namespace ante_up.Data
             _anteContext.SaveChanges();
         }
 
-        public IEnumerable<Wager> GetWagerByGame(string gameName)
+        public List<Wager> GetWagerByGame(string gameName)
         {
             return _anteContext.Wager.Where(wager => wager.Game == gameName)
                 .Include(team1 => team1.Team1)

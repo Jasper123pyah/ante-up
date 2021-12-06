@@ -44,6 +44,9 @@ namespace ante_up.Logic
 
         public List<ViewWager> GetRecommendedWagers()
         {
+            // get account most played game 
+            // get fullest wagers in that game
+            // no most played game? fulled wagers anywhere
             return new List<ViewWager>();
         }
 

@@ -24,7 +24,7 @@ namespace ante_up.Controllers
 
             public GameController(IAnteUpContext context)
             {
-                _gameLogic = new GameLogic(new GameData(context));
+                _gameLogic = new GameLogic(new GameData(context), new WagerData(context));
             }
 
             [HttpGet]

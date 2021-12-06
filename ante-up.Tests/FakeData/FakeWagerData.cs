@@ -67,7 +67,7 @@ namespace ante_up.Tests.FakeData
             }
         }
 
-        public IEnumerable<Wager> GetWagerByGame(string gameName)
+        public List<Wager> GetWagerByGame(string gameName)
         {
             return Wagers.Where(wager => wager.Game == gameName).ToList();
         }

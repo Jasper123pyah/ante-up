@@ -10,7 +10,7 @@ namespace ante_up.Tests
 {
     public class GameTests
     {
-        private readonly GameLogic _gameLogic = new(new FakeGameData());
+        private readonly GameLogic _gameLogic = new(new FakeGameData(), new FakeWagerData());
 
         public GameTests()
         {
@@ -19,7 +19,7 @@ namespace ante_up.Tests
         [Test]
         public void GetAllGames_HasInitialGames()
         {
-            List<Game> games = _gameLogic.GetAllGames();
+            List<ApiGame> games = _gameLogic.GetAllGames();
 
             bool result = games.Any(x => x.Name == "Fortnite");
             

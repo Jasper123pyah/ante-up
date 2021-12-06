@@ -9,16 +9,18 @@ namespace ante_up.Logic
     public class AccountStatsLogic
     {
         private readonly IAccountData _accountData;
+        private readonly AccountLogic _accountLogic;
 
         public AccountStatsLogic(IAccountData accountData)
         {
             _accountData = accountData;
+            _accountLogic = new AccountLogic(accountData);
         }
 
         private int GetAccountRank(string id)
         {
-            return _accountData.GetAccountById(id).Elo;
-            // should be rank instead of elo
+            _accountData.GetAccountById(id);
+            return 1;
         }   
         
         public void CalculateELO(ref int playerOneRating, ref int playerTwoRating)
@@ -33,12 +35,12 @@ namespace ante_up.Logic
         public ApiAccountStats GetAccountStats(string token, string name)
         {
             string id = JWTLogic.GetId(token);
-            Account account = _accountData.GetAccountById(_accountData.GetAccountIdByUsername(name));
+            Account account = _accountLogic.GetAccountById(_accountData.GetAccountIdByUsername(name));
             if (account.Id.ToString() == id) // user is looking at his own profile
             {
                 // do something
             }
-            ApiAccountStats apiAccountStats = new (account.Username, account.Elo, account.Created, account.GamerTags,
+            ApiAccountStats apiAccountStats = new (account.Username, account.Created, account.GamerTags,
                 account.WagerResults, account.GameStats);
 
             return apiAccountStats;

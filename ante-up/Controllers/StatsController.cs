@@ -20,7 +20,7 @@ namespace ante_up.Controllers
             _statsLogic = new AccountStatsLogic(new AccountData(context));
         }
         
-        [HttpGet("profile/{name}")]
+        [HttpGet("/profile/{name}")]
         public IActionResult GetAccountStats(string name)
         {
             return StatusCode(200, _statsLogic.GetAccountStats(Request.Headers["Authorization"], name));

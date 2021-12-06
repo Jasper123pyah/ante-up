@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ante_up.Data;
 
 namespace ante_up.Data.Migrations
 {
     [DbContext(typeof(AnteUpContext))]
-    partial class AnteUpContextModelSnapshot : ModelSnapshot
+    [Migration("20211206083012_GameStatsTweak")]
+    partial class GameStatsTweak
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

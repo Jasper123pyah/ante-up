@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ante_up.Data;
 
 namespace ante_up.Data.Migrations
 {
     [DbContext(typeof(AnteUpContext))]
-    partial class AnteUpContextModelSnapshot : ModelSnapshot
+    [Migration("20211205181756_Elo")]
+    partial class Elo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,6 +30,9 @@ namespace ante_up.Data.Migrations
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Elo")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
@@ -144,55 +149,55 @@ namespace ante_up.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e627732a-2a8c-489d-9f37-913a975e77bc"),
+                            Id = new Guid("105b8cec-6f33-4e62-8d01-61c94b67128f"),
                             Image = "fortnite.jpg",
                             Name = "Fortnite"
                         },
                         new
                         {
-                            Id = new Guid("0d1bb319-4447-4c00-9fd9-dd47fd4d1e70"),
+                            Id = new Guid("ffd1530f-c520-47dd-8609-f5fb9a39d3cb"),
                             Image = "chess.jpg",
                             Name = "Chess"
                         },
                         new
                         {
-                            Id = new Guid("c512aaff-7a84-4671-b7a8-634e63c24dca"),
+                            Id = new Guid("b5957cee-01fa-4b16-a123-b5fdbedb4d91"),
                             Image = "codmw.jpg",
                             Name = "Call of Duty MW"
                         },
                         new
                         {
-                            Id = new Guid("e195bca3-072c-49f5-932b-eade0c127444"),
+                            Id = new Guid("c3dafe5b-7c32-4f8a-9941-6fe6fe7c6d82"),
                             Image = "csgo.jpg",
                             Name = "CS:GO"
                         },
                         new
                         {
-                            Id = new Guid("81f84fbf-8c4c-47b8-bed8-689d0987c5f2"),
+                            Id = new Guid("67a22445-41c8-46a1-80d0-408d371d36e3"),
                             Image = "fifa22.jpg",
                             Name = "Fifa 22"
                         },
                         new
                         {
-                            Id = new Guid("61a649c1-4730-42c6-a55e-0ba386de2cf2"),
+                            Id = new Guid("11d8d908-8bb2-4bca-a061-d20b3746e4ad"),
                             Image = "madden.jpg",
                             Name = "Madden NFL 22"
                         },
                         new
                         {
-                            Id = new Guid("750ed041-c547-450d-95fc-f724b6d520a1"),
+                            Id = new Guid("093976e0-56e9-42c0-96df-e0433372d306"),
                             Image = "nba2k.jpg",
                             Name = "NBA 2K22"
                         },
                         new
                         {
-                            Id = new Guid("e349773e-c6d8-4cf9-bf21-9eed8652ea19"),
+                            Id = new Guid("8aa0558f-e6c0-42d7-8b07-7ad85ffb41da"),
                             Image = "apex.jpg",
                             Name = "Apex Legends"
                         },
                         new
                         {
-                            Id = new Guid("ede1df29-350b-4d8b-acdc-2b6db965a71d"),
+                            Id = new Guid("488d8a1d-6dae-4786-b9b0-54ac22a273f5"),
                             Image = "leagueoflegends.jpg",
                             Name = "League of Legends"
                         });
@@ -207,20 +212,11 @@ namespace ante_up.Data.Migrations
                     b.Property<Guid?>("AccountId")
                         .HasColumnType("char(36)");
 
-                    b.Property<int>("Earnings")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Elo")
-                        .HasColumnType("int");
-
                     b.Property<string>("GameName")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Losses")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Wins")
-                        .HasColumnType("int");
+                    b.Property<string>("Skill")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ante_up.Data;
 
 namespace ante_up.Data.Migrations
 {
     [DbContext(typeof(AnteUpContext))]
-    partial class AnteUpContextModelSnapshot : ModelSnapshot
+    [Migration("20211205185145_EloToGameStats")]
+    partial class EloToGameStats
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -144,55 +146,55 @@ namespace ante_up.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e627732a-2a8c-489d-9f37-913a975e77bc"),
+                            Id = new Guid("d0e99a19-0040-43c9-bb84-53fd1221411b"),
                             Image = "fortnite.jpg",
                             Name = "Fortnite"
                         },
                         new
                         {
-                            Id = new Guid("0d1bb319-4447-4c00-9fd9-dd47fd4d1e70"),
+                            Id = new Guid("3205bd33-5928-4684-bddd-792b614bb617"),
                             Image = "chess.jpg",
                             Name = "Chess"
                         },
                         new
                         {
-                            Id = new Guid("c512aaff-7a84-4671-b7a8-634e63c24dca"),
+                            Id = new Guid("0d315544-d46d-446b-9cfd-22cfa91022ac"),
                             Image = "codmw.jpg",
                             Name = "Call of Duty MW"
                         },
                         new
                         {
-                            Id = new Guid("e195bca3-072c-49f5-932b-eade0c127444"),
+                            Id = new Guid("3a908d63-7744-4a06-a9a3-f618d02dc0c1"),
                             Image = "csgo.jpg",
                             Name = "CS:GO"
                         },
                         new
                         {
-                            Id = new Guid("81f84fbf-8c4c-47b8-bed8-689d0987c5f2"),
+                            Id = new Guid("07d5aa64-1a9f-47b5-8fda-41a7cd7bab0c"),
                             Image = "fifa22.jpg",
                             Name = "Fifa 22"
                         },
                         new
                         {
-                            Id = new Guid("61a649c1-4730-42c6-a55e-0ba386de2cf2"),
+                            Id = new Guid("aa55236f-5a54-44d8-afb6-c76e3e66c76d"),
                             Image = "madden.jpg",
                             Name = "Madden NFL 22"
                         },
                         new
                         {
-                            Id = new Guid("750ed041-c547-450d-95fc-f724b6d520a1"),
+                            Id = new Guid("98ad5e4b-ea26-43a3-9534-47c3e71e750a"),
                             Image = "nba2k.jpg",
                             Name = "NBA 2K22"
                         },
                         new
                         {
-                            Id = new Guid("e349773e-c6d8-4cf9-bf21-9eed8652ea19"),
+                            Id = new Guid("f1252346-bd75-4948-a853-4a8e4479241d"),
                             Image = "apex.jpg",
                             Name = "Apex Legends"
                         },
                         new
                         {
-                            Id = new Guid("ede1df29-350b-4d8b-acdc-2b6db965a71d"),
+                            Id = new Guid("32784a46-c8fc-4d7a-bf53-801ff10abed4"),
                             Image = "leagueoflegends.jpg",
                             Name = "League of Legends"
                         });
@@ -207,20 +209,11 @@ namespace ante_up.Data.Migrations
                     b.Property<Guid?>("AccountId")
                         .HasColumnType("char(36)");
 
-                    b.Property<int>("Earnings")
-                        .HasColumnType("int");
-
                     b.Property<int>("Elo")
                         .HasColumnType("int");
 
                     b.Property<string>("GameName")
                         .HasColumnType("longtext");
-
-                    b.Property<int>("Losses")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Wins")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
