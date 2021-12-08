@@ -10,10 +10,12 @@ using ante_up.Common.Interfaces.Data.Context;
 using ante_up.Data;
 using ante_up.Logic;
 using ante_up.Logic.JWT;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ante_up.Hubs
 {
+    [EnableCors("AllowCORS")]
     public class AnteHub : Hub
     {
         private readonly FriendLogic _friendLogic;
