@@ -43,7 +43,8 @@ namespace ante_up
                     builder =>
                     {
                         builder.WithOrigins("localhost:3000",
-                                            "localhost:6000");
+                                            "localhost:6000",
+                                            "zealous-clarke-145490.netlify.app");
                     });
             }); 
             services.AddSignalR(e => {
