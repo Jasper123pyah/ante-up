@@ -26,7 +26,7 @@ namespace ante_up.Controllers
             _adminLogic = new AdminLogic(new AccountData(context), new FriendData(context), new WagerData(context));
         }
         
-        [HttpGet("/admin")]
+        [HttpGet]
         public IActionResult CheckAdminToken()
         {
             return StatusCode(200, JWTLogic.CheckAdminToken(Request.Headers["Authorization"]));
