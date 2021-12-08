@@ -20,7 +20,7 @@ namespace ante_up.Logic
         {
             Account account = _accountData.GetAccountById(accountId);
             if (account == null)
-                throw new ApiException(404, "There is no account with this email.");
+                throw new ApiException(404, "Account not found.");
             return account;
         }
 

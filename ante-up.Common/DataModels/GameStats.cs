@@ -8,6 +8,7 @@ namespace ante_up.Common.DataModels
         [Key] 
         public Guid Id { get; set; }
         public string GameName { get; set; }
+        public string GamerTag { get; set; }
         public int Wins { get; set; }
         public int Losses { get; set; }
         public int Earnings { get; set; }

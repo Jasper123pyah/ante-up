@@ -18,7 +18,6 @@ namespace ante_up.Common.DataModels
         public List<FriendRequest> FriendRequests { get;set;}
         public List<WagerResult> WagerResults { get; set; }
         public List<GameStats> GameStats { get; set; }
-        public List<GamerTag> GamerTags { get; set; }
         public bool IsAdmin { get; private set; }
         public DateTime Created { get; set; }
         public Account() { }
@@ -34,7 +33,6 @@ namespace ante_up.Common.DataModels
             FriendRequests = new List<FriendRequest>();
             WagerResults = new List<WagerResult>();
             GameStats = new List<GameStats>();
-            GamerTags = new List<GamerTag>();
             IsAdmin = false;
             Created = DateTime.Today;
         }

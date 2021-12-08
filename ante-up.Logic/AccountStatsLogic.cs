@@ -40,7 +40,7 @@ namespace ante_up.Logic
             {
                 // do something
             }
-            ApiAccountStats apiAccountStats = new (account.Username, account.Created, account.GamerTags,
+            ApiAccountStats apiAccountStats = new (account.Username, account.Created,
                 account.WagerResults, account.GameStats);
 
             return apiAccountStats;
