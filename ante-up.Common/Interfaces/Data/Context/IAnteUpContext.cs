@@ -2,7 +2,7 @@ using System;
 using ante_up.Common.DataModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace ante_up.Common.Interfaces.Data
+namespace ante_up.Common.Interfaces.Data.Context
 {
     public interface IAnteUpContext : IDbContext, IDisposable
     {

@@ -23,4 +23,8 @@
       <ProjectReference Include="..\ante-up.Logic\ante-up.Logic.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="IntegrationTests" />
+    </ItemGroup>
+
 </Project>

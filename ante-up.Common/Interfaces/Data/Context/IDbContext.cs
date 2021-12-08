@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace ante_up.Common.Interfaces.Data
+namespace ante_up.Common.Interfaces.Data.Context
 {
     public interface IDbContext
     {

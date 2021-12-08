@@ -1,5 +1,5 @@
 using System;
-using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Context;
 using ante_up.Data;
 using ante_up.Hubs;
 using ante_up.Middleware;

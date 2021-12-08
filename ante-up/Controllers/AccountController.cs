@@ -5,12 +5,11 @@ using System.Net.Http;
 using System.Text;
 using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
-using ante_up.Common.Interfaces.Data;
+using ante_up.Common.Interfaces.Data.Context;
 using ante_up.Data;
 using ante_up.Logic;
 using ante_up.Logic.JWT;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ante_up.Controllers

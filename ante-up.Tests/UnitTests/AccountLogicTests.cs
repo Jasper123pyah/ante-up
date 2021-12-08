@@ -46,9 +46,7 @@ namespace ante_up.Tests
         [Test]
         public void GetAccountByUsername_AccountIsNull()
         {
-            bool result = _accountLogic.GetAccountByUserName("NonExistentUser") == null;
-
-            Assert.IsTrue(result);
+            Assert.Throws<ApiException>(() => _accountLogic.GetAccountByUserName("NonExistentUser"));
         }
 
         [Test]
