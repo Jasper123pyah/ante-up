@@ -8,7 +8,9 @@ using ante_up.Common.Interfaces.Data;
 using ante_up.Common.Interfaces.Data.Classes;
 using ante_up.Common.Interfaces.Data.Context;
 using ante_up.Data;
+using ante_up.Data.DataClasses;
 using ante_up.Logic;
+using ante_up.Logic.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 

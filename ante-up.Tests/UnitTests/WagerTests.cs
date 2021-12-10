@@ -1,4 +1,4 @@
-namespace ante_up.Tests
+namespace ante_up.Tests.UnitTests
 {
     public class WagerTests
     {

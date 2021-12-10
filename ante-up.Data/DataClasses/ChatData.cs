@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ante_up.Common.HubModels;
 using ante_up.Common.DataModels;
-using ante_up.Common.Interfaces.Data;
 using ante_up.Common.Interfaces.Data.Classes;
 using ante_up.Common.Interfaces.Data.Context;
 
-namespace ante_up.Data
+namespace ante_up.Data.DataClasses
 {
     public class ChatData : IChatData
     {

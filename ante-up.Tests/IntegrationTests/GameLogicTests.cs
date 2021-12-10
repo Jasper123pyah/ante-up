@@ -3,10 +3,11 @@ using System.Linq;
 using ante_up.Common.ApiModels;
 using ante_up.Common.DataModels;
 using ante_up.Logic;
+using ante_up.Logic.Services;
 using ante_up.Tests.FakeData;
 using NUnit.Framework;
 
-namespace ante_up.Tests
+namespace ante_up.Tests.IntegrationTests
 {
     public class GameTests
     {
