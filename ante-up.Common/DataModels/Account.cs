@@ -27,7 +27,7 @@ namespace ante_up.Common.DataModels
             Id = Guid.NewGuid();
             Email = email;
             Username = username;
-            Password = password;
+            Password = BCrypt.Net.BCrypt.HashPassword(password);
             Balance = 0;
             ConnectionIds = new List<ConnectionId>();
             FriendRequests = new List<FriendRequest>();
@@ -37,6 +37,11 @@ namespace ante_up.Common.DataModels
             Created = DateTime.Today;
         }
 
+        public bool VerifyPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, Password);
+        }
+        
         public IEnumerable<string> GetConnectionIds()
         {
             return ConnectionIds.Select(connId => connId.Connection).ToList();
@@ -47,6 +52,10 @@ namespace ante_up.Common.DataModels
             ConnectionIds.Add(new ConnectionId(connectionId));
         }
 
+        public void AddBalance(int amount)
+        {
+            Balance += amount;
+        }
         public void RemoveTeam()
         {
             Team = null;

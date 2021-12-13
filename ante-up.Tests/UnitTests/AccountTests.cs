@@ -7,6 +7,24 @@ namespace ante_up.Tests.UnitTests
     public class AccountTests
     {
         [Test]
+        public void CheckAccountHash_True()
+        {
+            Account account = new("email", "username", "password");
+
+            bool result = account.VerifyPassword("password");
+            
+            Assert.IsTrue(result);
+        }
+        [Test]
+        public void CheckAccountHash_False()
+        {
+            Account account = new("email", "username", "password");
+
+            bool result = !account.VerifyPassword("wrongpassword");
+            
+            Assert.IsTrue(result);
+        }
+        [Test]
         public void AddConnectionId_Added()
         {
             Account account = new("email", "username", "password");

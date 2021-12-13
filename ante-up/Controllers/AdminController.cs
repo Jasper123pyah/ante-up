@@ -1,12 +1,8 @@
-using System;
 using System.Collections.Generic;
 using ante_up.Common.AdminModels;
 using ante_up.Common.ApiModels.Admin;
-using ante_up.Common.Interfaces.Data;
 using ante_up.Common.Interfaces.Data.Context;
-using ante_up.Data;
 using ante_up.Data.DataClasses;
-using ante_up.Logic;
 using ante_up.Logic.JWT;
 using ante_up.Logic.Services;
 using Microsoft.AspNetCore.Cors;
@@ -19,12 +15,10 @@ namespace ante_up.Controllers
     [Route("[controller]")]
     public class AdminController : Controller
     {
-        private readonly AccountLogic _accountLogic;
         private readonly GameLogic _gameLogic;
         private readonly AdminLogic _adminLogic;
         public AdminController(IAnteUpContext context)
         {
-            _accountLogic = new AccountLogic(new AccountData(context));
             _gameLogic = new GameLogic(new GameData(context), new WagerData(context));
             _adminLogic = new AdminLogic(new AccountData(context), new FriendData(context), new WagerData(context));
         }

@@ -68,7 +68,7 @@ namespace ante_up.Logic.Services
         {
             Account account = GetAccountByEmail(accountEmail);
             
-            if (!BCrypt.Net.BCrypt.Verify(password, account.Password))
+            if (!account.VerifyPassword(password))
                 throw new ApiException(401, "Incorrect password.");
             if (account.IsAdmin)
                 return new ApiLogin()
@@ -93,11 +93,9 @@ namespace ante_up.Logic.Services
                 throw new ApiException(409, "Email is already taken.");
             if (_accountData.GetAccountIdByUsername(account.Username) != null)
                 throw new ApiException(409, "Username is already taken.");
-
-            account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
-            _accountData.Register(new Account(account.Email, account.Username, account.Password));
-           
             
+            _accountData.Register(new Account(account.Email, account.Username, account.Password));
+
             ApiLogin login = new()
             {
                 Username = account.Username, 
