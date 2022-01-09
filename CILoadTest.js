@@ -12,6 +12,6 @@ export const options = {
 };
 
 export default function () {
-    const res = http.get('https://test.k6.io');
+    const res = http.get('http://78.47.219.206:420/game');
     sleep(1);
 }
