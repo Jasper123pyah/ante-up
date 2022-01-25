@@ -65,5 +65,13 @@ namespace ante_up.Common.DataModels
         {
             Team = team;
         }
+
+        public GameStats GetGameStats(string gameName)
+        {
+            if (GameStats.Any(x => x.GameName == gameName))
+                return GameStats.FirstOrDefault(x => x.GameName == gameName);
+            else
+                return new GameStats(gameName);
+        }
     }
 }

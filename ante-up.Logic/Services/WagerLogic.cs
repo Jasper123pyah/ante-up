@@ -86,25 +86,25 @@ namespace ante_up.Logic.Services
                 Team1 = new ViewTeam()
                 {
                     Id = wager.Team1.Id.ToString(),
-                    Players = ConvertAccounts(wager.Team1.Players)
+                    Players = ConvertAccounts(wager.Team1.Players, wager.Game)
                 },
                 Team2 = new ViewTeam()
                 {
                     Id = wager.Team2.Id.ToString(),
-                    Players = ConvertAccounts(wager.Team2.Players)
+                    Players = ConvertAccounts(wager.Team2.Players, wager.Game)
                 },
                 Chat = wager.Chat
             };
             return viewWager;
         }
 
-        private static List<ViewAccount> ConvertAccounts(IEnumerable<Account> accounts)
+        private static List<ViewAccount> ConvertAccounts(IEnumerable<Account> accounts, string game)
         {
             return accounts.Select(account => new ViewAccount()
             {
-                Id = account.Id.ToString(),
                 Username = account.Username,
-                TeamId = account.Team.Id.ToString()
+                TeamId = account.Team.Id.ToString(),
+                GameStats = new ApiGameStats(account.GetGameStats(game))
             }).ToList();
         }
 
