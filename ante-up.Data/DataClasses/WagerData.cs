@@ -59,9 +59,9 @@ namespace ante_up.Data.DataClasses
         public Wager? GetById(string id)
         {
             return _anteContext.Wager.Include(team1 => team1.Team1)
-                .ThenInclude(x => x.Players)
+                .ThenInclude(x => x.Players).ThenInclude(x => x.GameStats)
                 .Include(team2 => team2.Team2)
-                .ThenInclude(x => x.Players)
+                .ThenInclude(x => x.Players).ThenInclude(x => x.GameStats)
                 .Include(x => x.Chat)
                 .ThenInclude(x => x.Messages)
                 .FirstOrDefault(wager => wager.Id.ToString() == id);
@@ -70,9 +70,9 @@ namespace ante_up.Data.DataClasses
         private Wager GetByHostId(string hostId)
         {
             return _anteContext.Wager.Include(team1 => team1.Team1)
-                .ThenInclude(x => x.Players)
+                .ThenInclude(x => x.Players).ThenInclude(x => x.GameStats)
                 .Include(team2 => team2.Team2)
-                .ThenInclude(x => x.Players)
+                .ThenInclude(x => x.Players).ThenInclude(x => x.GameStats)
                 .Include(x => x.Chat)
                 .ThenInclude(x => x.Messages)
                 .FirstOrDefault(wager => wager.HostId == hostId)!;
@@ -109,17 +109,17 @@ namespace ante_up.Data.DataClasses
         {
             return _anteContext.Wager.Where(wager => wager.Game == gameName)
                 .Include(team1 => team1.Team1)
-                .ThenInclude(x => x.Players)
+                .ThenInclude(x => x.Players).ThenInclude(x => x.GameStats)
                 .Include(team2 => team2.Team2)
-                .ThenInclude(x => x.Players).ToList();
+                .ThenInclude(x => x.Players).ThenInclude(x => x.GameStats).ToList();
         }
 
         public Wager GetWagerByTeam(Team team)
         {
             return _anteContext.Wager.Include(team1 => team1.Team1)
-                .ThenInclude(x => x.Players)
+                .ThenInclude(x => x.Players).ThenInclude(x => x.GameStats)
                 .Include(team2 => team2.Team2)
-                .ThenInclude(x => x.Players).FirstOrDefault(x => x.Team1.Id == team.Id || x.Team2.Id == team.Id)!;
+                .ThenInclude(x => x.Players).ThenInclude(x => x.GameStats).FirstOrDefault(x => x.Team1.Id == team.Id || x.Team2.Id == team.Id)!;
         }
     }
 }

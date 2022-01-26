@@ -102,6 +102,7 @@ namespace ante_up.Logic.Services
         {
             return accounts.Select(account => new ViewAccount()
             {
+                Id = account.Id.ToString(),
                 Username = account.Username,
                 TeamId = account.Team.Id.ToString(),
                 GameStats = new ApiGameStats(account.GetGameStats(game))

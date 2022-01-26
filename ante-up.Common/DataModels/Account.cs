@@ -66,12 +66,18 @@ namespace ante_up.Common.DataModels
             Team = team;
         }
 
+        public bool HasGameStats(string gameName)
+        {
+            if (GameStats?.FirstOrDefault(x => x.GameName == gameName) == null)
+                return false;
+            return true;
+        }
         public GameStats GetGameStats(string gameName)
         {
-            if (GameStats.Any(x => x.GameName == gameName))
+            if(HasGameStats(gameName))
                 return GameStats.FirstOrDefault(x => x.GameName == gameName);
-            else
-                return new GameStats(gameName);
+            
+            return new GameStats(gameName);
         }
     }
 }
