@@ -16,6 +16,11 @@ namespace ante_up.Data.DataClasses
             _anteContext = context;
         }
 
+        public void AddToBlacklist(Wager wager, string accountId)
+        {
+            wager.BlackList.Add(new Blacklisted(accountId));
+            _anteContext.SaveChanges();
+        }
         public string AddWager(Wager wager)
         {
             _anteContext.Wager.Add(wager);
@@ -23,9 +28,10 @@ namespace ante_up.Data.DataClasses
             return GetByHostId(wager.HostId).Id.ToString();
         }
 
-        public void ChangeHost(Wager wager, string hostId)
+        public void ChangeHost(Wager wager, string hostId, string hostName)
         {
             wager.HostId = hostId;
+            wager.HostName = hostName;
             _anteContext.SaveChanges();
         }
 

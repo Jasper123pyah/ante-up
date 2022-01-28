@@ -47,6 +47,13 @@ namespace ante_up.Logic.Services
             return new List<ViewWager>();
         }
 
+        public void AddToBlacklist(Wager wager, string accountId)
+        {
+            if (wager.BlackList == null)
+                wager.BlackList = new List<Blacklisted>();
+            if(wager.BlackList.FirstOrDefault(x => x.AccountId == accountId) == null)
+                _wagerData.AddToBlacklist(wager, accountId);
+        }
         public ViewWager CreateViewWager(string wagerId)
         {
             Wager wager = _wagerData.GetById(wagerId);
@@ -118,9 +125,9 @@ namespace ante_up.Logic.Services
             if (wager != null && wager.HostId == account.Id.ToString())
             {
                 if (wager.Team1.Players.FirstOrDefault()?.Id != null)
-                    _wagerData.ChangeHost(wager, wager.Team1.Players.FirstOrDefault()?.Id.ToString());
+                    _wagerData.ChangeHost(wager, wager.Team1.Players.FirstOrDefault()?.Id.ToString(), wager.Team1.Players.FirstOrDefault()?.Username.ToString());
                 else if (wager.Team2.Players.FirstOrDefault()?.Id != null)
-                    _wagerData.ChangeHost(wager, wager.Team2.Players.FirstOrDefault()?.Id.ToString());
+                    _wagerData.ChangeHost(wager, wager.Team2.Players.FirstOrDefault()?.Id.ToString(),wager.Team1.Players.FirstOrDefault()?.Username.ToString());
                 else
                 {
                     _wagerData.DeleteWager(wager);

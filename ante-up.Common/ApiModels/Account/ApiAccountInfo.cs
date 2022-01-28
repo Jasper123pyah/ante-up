@@ -6,5 +6,6 @@ namespace ante_up.Common.ApiModels
         public string Email { get; set; }
         public string Username { get; set; }
         public int Balance { get; set; }
+        public bool InWager { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace ante_up.Common.DataModels
         public Team Team1 { get;set;  }
         public Team Team2 { get; set; }
         public Chat Chat { get; set; }
+        public List<Blacklisted> BlackList { get; set; }
 
         public Wager(){}
         public Wager(string game, string title, string description, string hostId, string hostName, int ante, int playerCap)
@@ -32,6 +33,7 @@ namespace ante_up.Common.DataModels
             Team1 = new Team();
             Team2 = new Team();
             Chat = new Chat();
+            BlackList = new List<Blacklisted>();
         }
 
     }

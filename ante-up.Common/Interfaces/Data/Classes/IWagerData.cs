@@ -7,7 +7,7 @@ namespace ante_up.Common.Interfaces.Data.Classes
     {
         string AddWager(Wager wager);
 
-        void ChangeHost(Wager wager, string hostId);
+        void ChangeHost(Wager wager, string hostId, string hostName);
 
         void JoinTeam(Wager wager, Account account, int teamNumber);
         void DeleteWager(Wager wager);
@@ -18,5 +18,6 @@ namespace ante_up.Common.Interfaces.Data.Classes
 
         List<Wager> GetWagerByGame(string gameName);
         Wager GetWagerByTeam(Team team);
+        void AddToBlacklist(Wager wager, string accountId);
     }
 }

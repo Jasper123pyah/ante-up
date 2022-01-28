@@ -114,6 +114,7 @@ namespace ante_up.Hubs
             if (JWTLogic.GetId(lobbyKick.HostToken) == wager.HostId)
             {
                 _wagerLogic.LeaveWager(wager.Id.ToString(), lobbyKick.User);
+                _wagerLogic.AddToBlacklist(wager, lobbyKick.User);
                 RemoveAccountFromGroup(account, lobbyKick.Lobby);
                 LobbyResponse lobbyLeave = new()
                 {

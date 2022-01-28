@@ -14,7 +14,7 @@ namespace ante_up.Tests.FakeData
             return GetById(wager.Id.ToString()).Id.ToString();
         }
 
-        public void ChangeHost(Wager wager, string hostId)
+        public void ChangeHost(Wager wager, string hostId, string hostName)
         {
             GetById(wager.Id.ToString()).HostId = hostId;
         }
@@ -74,6 +74,11 @@ namespace ante_up.Tests.FakeData
         public Wager GetWagerByTeam(Team team)
         {
             return Wagers.FirstOrDefault(x => x.Team1.Id == team.Id || x.Team2.Id == team.Id)!;
+        }
+
+        public void AddToBlacklist(Wager wager, string accountId)
+        {
+            wager.BlackList.Add(new Blacklisted(accountId));
         }
     }
 }

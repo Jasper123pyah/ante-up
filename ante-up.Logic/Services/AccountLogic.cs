@@ -58,7 +58,8 @@ namespace ante_up.Logic.Services
                 Id = account.Id.ToString(),
                 Username = account.Username,
                 Balance = account.Balance,
-                Email = account.Email
+                Email = account.Email,
+                InWager = account.Team != null
             };
 
             return accountInfo;
