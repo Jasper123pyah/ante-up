@@ -17,9 +17,7 @@ namespace ante_up.Logic.Services
         private readonly IAccountData _accountData;
         private readonly IBalanceData _balanceData;
 
-        public BalanceLogic()
-        {
-        }
+        public BalanceLogic() {}
         
         public BalanceLogic(IAccountData accountData, IBalanceData balanceData)
         {

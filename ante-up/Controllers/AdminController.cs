@@ -43,10 +43,16 @@ namespace ante_up.Controllers
             return StatusCode(200);
         }
 
-        [HttpDelete("/admin/game")]
-        public IActionResult DeleteGame(string gameName)
+        [HttpPut("/admin/game")]
+        public IActionResult EditGame(ApiAdminGame adminGame)
         {
-            _gameLogic.DeleteGame(gameName, Request.Headers["Authorization"]);
+            _gameLogic.EditGame(adminGame,Request.Headers["Authorization"]);
+            return StatusCode(200);
+        }
+        [HttpDelete("/admin/game/{id}")]
+        public IActionResult DeleteGame(string id)
+        {
+            _gameLogic.DeleteGame(id, Request.Headers["Authorization"]);
             return StatusCode(200);
         }
     }

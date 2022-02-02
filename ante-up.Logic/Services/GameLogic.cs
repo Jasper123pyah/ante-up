@@ -23,18 +23,48 @@ namespace ante_up.Logic.Services
         public void CreateGame(ApiAdminGame adminGame, string token)
         {
             if (JWTLogic.CheckAdminToken(token))
-                _gameData.AddGame(new Game(adminGame.Name, adminGame.Image));
-            throw new ApiException(403, "Not an admin");
+            {
+                Game game = new Game(adminGame.Name, adminGame.Image, adminGame.WaitingTime, adminGame.BannerImage);
+                foreach (string lobbySize in adminGame.LobbySizes)
+                {
+                    game.LobbySizes.Add(new LobbySize(lobbySize));
+                }
 
+                _gameData.AddGame(game);
+            }
+            else
+             throw new ApiException(403, "Not an admin");
         }
-        public void DeleteGame(string gameName, string token)
+
+        public void EditGame(ApiAdminGame adminGame, string token)
         {
-            Game game = _gameData.GetGameByName(gameName);
+            if (JWTLogic.CheckAdminToken(token))
+            {
+                Game game = _gameData.GetGameById(adminGame.Id);
+                List<LobbySize> oldLobbySizes = game.LobbySizes;
+                game.Name = adminGame.Name;
+                game.WaitingTime = adminGame.WaitingTime;
+                game.LobbySizes = new List<LobbySize>();
+                foreach (string lobbySize in adminGame.LobbySizes)
+                {
+                    game.LobbySizes.Add(new LobbySize(lobbySize));
+                }
+                if (adminGame.Image != null)
+                    game.Image = adminGame.Image;
+                if (adminGame.BannerImage != null)
+                    game.BannerImage = adminGame.BannerImage;
+                _gameData.EditGame(game, oldLobbySizes);
+            }
+            else
+                throw new ApiException(403, "Not an admin");
+        }
+        public void DeleteGame(string id, string token)
+        {
+            Game game = _gameData.GetGameById(id);
             if (game == null)
                 throw new ApiException(404, "Game not found.");
-            if (JWTLogic.CheckAdminToken(token))
+            if (!JWTLogic.CheckAdminToken(token))
                 throw new ApiException(403, "Not an admin");
-            
             _gameData.DeleteGame(game);
         }
         public List<ApiGame> GetAllGames()
@@ -42,8 +72,15 @@ namespace ante_up.Logic.Services
             List<Game> games = _gameData.GetAllGames();
             if (games.Count == 0)
                 throw new ApiException(404, "Games not found");
-
-            return games.Select(game => new ApiGame(game.Name, game.Image, _wagerData.GetWagerByGame(game.Name).Count)).OrderByDescending(x => x.Wagers).ToList();
+            return games.Select(game => new ApiGame(
+                game.Id.ToString(),
+                game.Name, 
+                game.Image, 
+                _wagerData.GetWagerByGame(game.Name).Count, 
+                game.BannerImage, 
+                game.LobbySizes.Select(lobbysize => lobbysize.Text).ToList(),
+                game.WaitingTime)
+            ).OrderByDescending(x => x.Wagers).ToList();
         }
         public List<string> GetAllGameNames()
         {

@@ -34,7 +34,7 @@ namespace ante_up
             
             services.AddDbContext<IAnteUpContext, AnteUpContext>(options => 
                 options.UseMySql(_anteUp, 
-                    ServerVersion.AutoDetect(_anteUp)));
+                    ServerVersion.AutoDetect(_anteUp), o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
             
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "ante_up", Version = "v1"}); });
             services.AddCors(options =>

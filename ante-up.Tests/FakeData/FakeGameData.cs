@@ -7,7 +7,7 @@ namespace ante_up.Tests.FakeData
 {
     public class FakeGameData : IGameData
     {
-        private List<Game> Games = new(){new Game("Fortnite", "fortnite.jpg")};
+        private List<Game> Games = new(){new Game("Fortnite", "fortnite.jpg", 60)};
         public List<Game> GetAllGames()
         {
             return Games;
@@ -21,6 +21,21 @@ namespace ante_up.Tests.FakeData
         public Game? GetGameByName(string gameName)
         {
             return Games.FirstOrDefault(x => x.Name == gameName);
+        }
+
+        public Game GetGameById(string Id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void EditGame(Game game, List<LobbySize> oldLobbySizes)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void EditGame(Game game)
+        {
+            throw new System.NotImplementedException();
         }
 
         public void AddGame(Game game)

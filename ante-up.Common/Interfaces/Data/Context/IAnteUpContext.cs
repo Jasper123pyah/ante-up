@@ -14,5 +14,6 @@ namespace ante_up.Common.Interfaces.Data.Context
         DbSet<ConnectionId> ConnectionId { get; set; }
         DbSet<Friendship> Friendship { get; set; }
         DbSet<FriendRequest> FriendRequest { get; set; }
+        DbSet<LobbySize> LobbySize { get; set; }
     }
 }
