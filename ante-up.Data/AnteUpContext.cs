@@ -23,16 +23,6 @@ namespace ante_up.Data
         {
             modelBuilder.Entity<Account>().HasKey(x => x.Id);
             modelBuilder.Entity<FriendRequest>().HasKey(x => x.Id);
-            modelBuilder.Entity<Game>().HasData(
-                new Game("Fortnite", "fortnite.jpg", 60),
-                new Game("Chess", "chess.jpg",60),
-                new Game("Call of Duty MW", "codmw.jpg",60),
-                new Game("CS:GO", "csgo.jpg",60),
-                new Game("Fifa 22", "fifa22.jpg",60),
-                new Game("Madden NFL 22", "madden.jpg",60),
-                new Game("NBA 2K22", "nba2k.jpg",60),
-                new Game("Apex Legends", "apex.jpg",60),
-                new Game("League of Legends", "leagueoflegends.jpg",60));
         }
     
         public AnteUpContext(DbContextOptions options) : base(options)

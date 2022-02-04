@@ -54,6 +54,8 @@ namespace ante_up.Data.DataClasses
         public Account? GetAccountById(string? id)
         {
             return _anteContext.Account.Include(x => x.ConnectionIds)
+                .Include(x => x.Transactions)
+                .ThenInclude(x => x.Actions)
                 .Include(x=> x.GameStats)
                 .Include(x => x.WagerResults)
                 .Include(x => x.FriendRequests)

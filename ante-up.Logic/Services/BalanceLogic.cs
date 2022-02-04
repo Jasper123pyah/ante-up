@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -55,20 +56,39 @@ namespace ante_up.Logic.Services
             return result;
         }
 
-        public int GetFeelessAmount(double amount)
+        private int CalculateCredits(float value)
         {
-            double ratio = 0.970873786407767;
-            double amountWithoutFee = amount - 0.30;
-            double answer = ratio * amountWithoutFee;
-            return Convert.ToInt32(answer);
+            return Convert.ToInt32(value * 100);
         }
         
-        public void UpdateAccountBalance(string token, string id)
+        public async Task UpdateAccountBalance(string token, string id)
         {
             string accountId = JWTLogic.GetId(token);
             Account account = _accountData.GetAccountById(accountId);
-            double amount = Convert.ToDouble(GetOrderInfo(id).Result.purchase_units[0].amount.value);
-            _balanceData.UpdateAccountBalance(account, GetFeelessAmount(amount));
+            // check if id doesnt exist yet
+            PaypalResponseRoot paypalOrder = await GetOrderInfo(id);
+            PaypalTransaction transaction = new PaypalTransaction()
+            {
+                PaypalId = paypalOrder.id,
+                CaptureId = paypalOrder.purchase_units[0].payments.captures[0].id,
+                PayerId = paypalOrder.payer.payer_id,
+                Value = float.Parse(paypalOrder.purchase_units[0].amount.value),
+                Ip = "",
+                Actions = new List<PaypalAction>()
+                {
+                    new ()
+                    {
+                        PaypalId = paypalOrder.id,
+                        Status = paypalOrder.status,
+                        Time = paypalOrder.purchase_units[0].payments.captures[0].create_time
+                    }
+                },
+                Credits = CalculateCredits(float.Parse(paypalOrder.purchase_units[0].amount.value)),
+                CreateTime = paypalOrder.create_time,
+                UpdateTime = paypalOrder.update_time
+            };
+
+            _balanceData.UpdateAccountBalance(account, transaction);
         }
     }
 }

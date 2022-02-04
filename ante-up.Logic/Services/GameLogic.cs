@@ -70,8 +70,6 @@ namespace ante_up.Logic.Services
         public List<ApiGame> GetAllGames()
         {
             List<Game> games = _gameData.GetAllGames();
-            if (games.Count == 0)
-                throw new ApiException(404, "Games not found");
             return games.Select(game => new ApiGame(
                 game.Id.ToString(),
                 game.Name, 

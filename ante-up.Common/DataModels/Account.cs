@@ -18,6 +18,7 @@ namespace ante_up.Common.DataModels
         public List<FriendRequest> FriendRequests { get;set;}
         public List<WagerResult> WagerResults { get; set; }
         public List<GameStats> GameStats { get; set; }
+        public List<PaypalTransaction> Transactions { get; set; }
         public bool IsAdmin { get; private set; }
         public DateTime Created { get; set; }
         public Account() { }

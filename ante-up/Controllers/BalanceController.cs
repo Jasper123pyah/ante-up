@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using ante_up.Common.Interfaces.Data.Context;
 using ante_up.Data.DataClasses;
 using ante_up.Logic.Services;
@@ -18,10 +20,10 @@ namespace ante_up.Controllers
             _balanceLogic = new BalanceLogic(new AccountData(context), new BalanceData(context));
         }
 
-        [HttpPost("/balance/update/{id}")]
-        public IActionResult GetGames(string id)
+        [HttpPost("/balance/deposit/{id}")]
+        public async Task<IActionResult> GetGames(string id)
         {
-            _balanceLogic.UpdateAccountBalance(Request.Headers["Authorization"], id);
+            await _balanceLogic.UpdateAccountBalance(Request.Headers["Authorization"], id);
             return StatusCode(200);
         }
     }
